@@ -37,7 +37,6 @@ class Artpiece(db.Model)
                           primary_key=True)
     artist_id = db.Column(db.Integer, 
                           db.ForeignKey('artists.artist_id'))
-
     #should the decade be an auto-incrementing integer or string like '00', '10'
     decade_id = db.Column(db.Integer, 
                           db.ForeignKey('decades.decade_id'))
@@ -54,14 +53,22 @@ class Artpiece(db.Model)
     creditline_id = db.Column(db.String(100), 
                               db.ForeignKey('creditlines.creditline_id'))
 
+
     # Define relationship to artist 
     artist = db.relationship("Artist", 
                               backref=db.backref("artpieces"))
 
     # Define relationship to decade 
-    # what goes in as an argument for db.backref
     decade = db.realtionship("Decade", 
-                              backref=db.backref("artpiece"))
+                              backref=db.backref("artpieces"))
+
+    # Define realtionship to medium 
+    medium = db.realtionship("Medium", 
+                              backref=db.backref("artpieces"))
+
+    # Define relationship to Creditline
+    creditline = db.realtionship("Creditline", 
+                                  backref=db.backref("artpieces"))
 
     def __repr__(self): 
         """Provide representation of an artpiece"""
@@ -85,13 +92,41 @@ class Creditline(db.Model)
     def __repr__(self): 
         """Provide respresentation  of a creditline"""
 
+        return "<Creditline creditline_id=%s creditline_name=%s >" % (self.creditline_id,
+                                                                      self.creditline_name)
+
 
 class ArtistArtpiece(db.Model)
-    pass
+    """Arist and an artpiece.""" 
+
+    artist_art_id = db.Column(db.Integer, 
+                              autoincrement=True, 
+                              primary_key=True)
+    artist_id = db.Column(db.Integer, 
+                          db.ForeignKey('artists.artist_id'))
+    art_id = db.Column(db.Integer, 
+                       db.ForeignKey('artpieces.art_id'))
+
+    def __repr__(self): 
+        """Provide representation of one an artist's artipiece""" 
+
+        return "<ArtistArtpiece artist_art_id=%s>" % (self.artist_art_id)
 
 
 class Medium(db.Model)
-    pass
+    """Medium of an artpiece."""
+
+    medium_id = db.Column(db.Integer, 
+                          autoincrement=True, 
+                          primary_key=True)
+
+    medium_desc = db.Column(db.String(200))
+
+    def __repr__(self): 
+        """Provide respresentation of a medium."""
+
+        return "<Medium medium_id=%s medium_desc=%s >" % (self.medium_id, 
+                                                          self.medium_desc) 
 
 
 class UserArtpiece(db.Model)
