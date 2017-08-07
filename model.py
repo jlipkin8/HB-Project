@@ -22,7 +22,7 @@ class Artist(db.Model)
     def __repr__(self): 
         """Provide representation of Artist when printed. """
 
-        return "<Artist artist_id=%s fname=%s lname=%s >" % (self.artist_id,
+        return "<Artist artist_id={} fname={} lname={} >".format(self.artist_id,
                                                              self.fname, 
                                                              self.lname)
 
@@ -59,30 +59,46 @@ class Artpiece(db.Model)
                               backref=db.backref("artpieces"))
 
     # Define relationship to decade 
-    decade = db.realtionship("Decade", 
+    decade = db.relationship("Decade", 
                               backref=db.backref("artpieces"))
 
     # Define realtionship to medium 
-    medium = db.realtionship("Medium", 
+    medium = db.relationship("Medium", 
                               backref=db.backref("artpieces"))
 
     # Define relationship to Creditline
-    creditline = db.realtionship("Creditline", 
+    creditline = db.relationship("Creditline", 
                                   backref=db.backref("artpieces"))
 
     def __repr__(self): 
         """Provide representation of an artpiece"""
 
-        return "<Artpiece art_id=%s title=%s >" % (self.art_id, self.title)
+        return "<Artpiece art_id={} title={} >".format(self.art_id, self.title)
 
 
 class Decade(db.Model)
     
-    pass
+    __tablename__ = "decades"
+
+    decade_id = db.Column(db.Integer, 
+                          autoincrement=True, 
+                          primary_key=True)
+    start_date = db.Column(db.DateTime)
+    end_date = db.Column(db.DateTime)
+
+    def __repr__(self): 
+        """Provide representation of a decade."""
+
+        return "<Decade decade_id={} start_date={} end_date={} >".format(
+                                                                self.decade_id,
+                                                                self.start_date, 
+                                                                self.end_date)
 
 
 class Creditline(db.Model)
     """Credit line of an artpiece.""" 
+
+    __tablename__ = "creditlines"
 
     creditline_id = db.Column(db.Integer, 
                               autoincrement=True, 
@@ -92,12 +108,14 @@ class Creditline(db.Model)
     def __repr__(self): 
         """Provide respresentation  of a creditline"""
 
-        return "<Creditline creditline_id=%s creditline_name=%s >" % (self.creditline_id,
+        return "<Creditline creditline_id={} creditline_name={} >".format(self.creditline_id,
                                                                       self.creditline_name)
 
 
 class ArtistArtpiece(db.Model)
     """Arist and an artpiece.""" 
+
+    __tablename__ = "artistartpieces"
 
     artist_art_id = db.Column(db.Integer, 
                               autoincrement=True, 
@@ -110,11 +128,13 @@ class ArtistArtpiece(db.Model)
     def __repr__(self): 
         """Provide representation of one an artist's artipiece""" 
 
-        return "<ArtistArtpiece artist_art_id=%s>" % (self.artist_art_id)
+        return "<ArtistArtpiece artist_art_id={}>".format(self.artist_art_id)
 
 
 class Medium(db.Model)
     """Medium of an artpiece."""
+
+    __tablename__ = "media"
 
     medium_id = db.Column(db.Integer, 
                           autoincrement=True, 
@@ -125,13 +145,51 @@ class Medium(db.Model)
     def __repr__(self): 
         """Provide respresentation of a medium."""
 
-        return "<Medium medium_id=%s medium_desc=%s >" % (self.medium_id, 
+        return "<Medium medium_id={} medium_desc={} >".format(self.medium_id, 
                                                           self.medium_desc) 
 
 
 class UserArtpiece(db.Model)
-    pass
+    """User and an artpiece.""" 
 
+    __tablename__ = "userartpieces"
+
+    user_art_id = db.Column(db.Integer, 
+                            autoincrement=True, 
+                            primary_key=True)
+    user_id = db.Column(db.Integer, 
+                        db.ForeignKey(''))
+    art_id = db.Column(db.Integer, 
+                       db.ForeignKey('artpieces.art_id'))
+    like = db.Column(db.Boolean)
+
+    def __repr__(self): 
+        """Provide representation of a user and an artpiece.""" 
+
+        return "<UserArtpiece user_art_id={} like={} >".format(self.user_art_id, 
+                                                           self.like)
 
 class User(db.Model)
-    pass
+    """User of the art app. """ 
+
+    __tablename__ = "users"
+
+    user_id = db.Column(db.Integer, 
+                        autoincrement=True, 
+                        primary_key=True)
+    user_name = db.Column(db.String(50))
+    age = db.Column(db.Integer)
+    occupation = db.Column(db.String(20))
+    SF_resident = db.Column(db.Boolean)
+    email = db.Column(db.String(75))
+    password = db.Column(db.String(75))
+
+    def __repr__(self): 
+        """Provide respresentation of a user of the art app. """
+
+        return "<User user_id={} user_name={} email={} >".format(self.user_id, 
+                                                                 self.user_name, 
+                                                                 self.email)
+
+
+    
