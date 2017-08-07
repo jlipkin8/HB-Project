@@ -1,14 +1,13 @@
 """Models and database functions for SF_Art project""" 
+from flask_sqlalchemy import SQLAlchemy 
 
-from flask_sqlalchemy import SQLAlchmey 
-
-db = SQLAlchmey()
+db = SQLAlchemy()
 
 
 ################################################################################
 #Model definitions 
 
-class Artist(db.Model)
+class Artist(db.Model):
     """Artist who made an artpiece"""
 
     __tablename__ = "artists"
@@ -27,7 +26,7 @@ class Artist(db.Model)
                                                              self.lname)
 
 
-class Artpiece(db.Model)
+class Artpiece(db.Model):
     """Artpiece made by an artist"""
 
     __tablename__ = "artpieces"
@@ -43,7 +42,7 @@ class Artpiece(db.Model)
 
     medium_id = db.Column(db.Integer, 
                           db.ForeignKey('media.medium_id'))
-    dimensions #unsure what the datatype will be ??
+    dimensions = db.Column(db.String(100))
 
     loc_desc = db.Column(db.String(300))
     #would 300 be too long? 
@@ -76,7 +75,7 @@ class Artpiece(db.Model)
         return "<Artpiece art_id={} title={} >".format(self.art_id, self.title)
 
 
-class Decade(db.Model)
+class Decade(db.Model):
     
     __tablename__ = "decades"
 
@@ -95,7 +94,7 @@ class Decade(db.Model)
                                                                 self.end_date)
 
 
-class Creditline(db.Model)
+class Creditline(db.Model):
     """Credit line of an artpiece.""" 
 
     __tablename__ = "creditlines"
@@ -112,7 +111,7 @@ class Creditline(db.Model)
                                                                       self.creditline_name)
 
 
-class ArtistArtpiece(db.Model)
+class ArtistArtpiece(db.Model):
     """Arist and an artpiece.""" 
 
     __tablename__ = "artistartpieces"
@@ -125,13 +124,20 @@ class ArtistArtpiece(db.Model)
     art_id = db.Column(db.Integer, 
                        db.ForeignKey('artpieces.art_id'))
 
+    # Define relationship to Artist 
+    artist = db.relationship("Artist", 
+                             backref=db.backref("artistartpieces"))
+    # Define relationship to Artpiece 
+    artipiece = db.realtionship("Artpiece", 
+                                backref=db.backref("artistartpieces"))
+
     def __repr__(self): 
         """Provide representation of one an artist's artipiece""" 
 
         return "<ArtistArtpiece artist_art_id={}>".format(self.artist_art_id)
 
 
-class Medium(db.Model)
+class Medium(db.Model):
     """Medium of an artpiece."""
 
     __tablename__ = "media"
@@ -149,7 +155,7 @@ class Medium(db.Model)
                                                           self.medium_desc) 
 
 
-class UserArtpiece(db.Model)
+class UserArtpiece(db.Model):
     """User and an artpiece.""" 
 
     __tablename__ = "userartpieces"
@@ -158,10 +164,19 @@ class UserArtpiece(db.Model)
                             autoincrement=True, 
                             primary_key=True)
     user_id = db.Column(db.Integer, 
-                        db.ForeignKey(''))
+                        db.ForeignKey('users.user_id'))
     art_id = db.Column(db.Integer, 
                        db.ForeignKey('artpieces.art_id'))
     like = db.Column(db.Boolean)
+
+    # Define relationship to user
+    user = db.relationship("User", 
+                            backref=db.backref("userartpieces"))
+
+    # Define relationship to artpiece 
+    artipiece = db.realtionship("Artpiece", 
+                                 backref=db.backref("userartpieces"))
+
 
     def __repr__(self): 
         """Provide representation of a user and an artpiece.""" 
@@ -169,7 +184,7 @@ class UserArtpiece(db.Model)
         return "<UserArtpiece user_art_id={} like={} >".format(self.user_art_id, 
                                                            self.like)
 
-class User(db.Model)
+class User(db.Model):
     """User of the art app. """ 
 
     __tablename__ = "users"
