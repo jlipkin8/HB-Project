@@ -83,8 +83,8 @@ class Timeperiod(db.Model):
     timeperiod_id = db.Column(db.Integer, 
                           autoincrement=True, 
                           primary_key=True)
-    start_date = db.Column(db.Integer)
-    end_date = db.Column(db.Integer)
+    start_period = db.Column(db.Integer)
+    end_period = db.Column(db.Integer)
 
     def __repr__(self): 
         """Provide representation of a decade."""

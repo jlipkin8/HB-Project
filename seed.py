@@ -34,8 +34,28 @@ def load_artists():
     db.session.commit()
 
 
-def create_load_decades(): 
-    """Create decades from a for-loop""" 
+def create_timeperiods(): 
+    """Create timeperiods from a for-loop""" 
+
+    print "Timeperiods"
+
+    start_period = 0 
+    end_period = 1700 
+
+    while end_period < 2021: 
+        timeperiod = (start_period, end_period)
+        db.session.add(timeperiod)
+        temperiod = end_period
+        start_period = temperiod + 1 
+
+        if start_period < 1901: 
+            end_period = end_period + 100 
+        else: 
+            end_period = end_period + 10
+             
+
+    db.session.commit()
+
 
 
 
