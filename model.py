@@ -1,4 +1,5 @@
 """Models and database functions for SF_Art project""" 
+from flask import Flask
 from flask_sqlalchemy import SQLAlchemy 
 
 db = SQLAlchemy()
@@ -42,14 +43,14 @@ class Artpiece(db.Model):
 
     medium_id = db.Column(db.Integer, 
                           db.ForeignKey('media.medium_id'))
-    dimensions = db.Column(db.String(100))
+    dimensions = db.Column(db.ARRAY(db.Numeric, dimensions=1))
 
     loc_desc = db.Column(db.String(300))
     #would 300 be too long? 
 
     title = db.Column(db.String(100))
 
-    creditline_id = db.Column(db.String(100), 
+    creditline_id = db.Column(db.Integer, 
                               db.ForeignKey('creditlines.creditline_id'))
 
 
@@ -128,7 +129,7 @@ class ArtistArtpiece(db.Model):
     artist = db.relationship("Artist", 
                              backref=db.backref("artistartpieces"))
     # Define relationship to Artpiece 
-    artipiece = db.realtionship("Artpiece", 
+    artipiece = db.relationship("Artpiece", 
                                 backref=db.backref("artistartpieces"))
 
     def __repr__(self): 
@@ -174,7 +175,7 @@ class UserArtpiece(db.Model):
                             backref=db.backref("userartpieces"))
 
     # Define relationship to artpiece 
-    artipiece = db.realtionship("Artpiece", 
+    artipiece = db.relationship("Artpiece", 
                                  backref=db.backref("userartpieces"))
 
 
@@ -192,12 +193,15 @@ class User(db.Model):
     user_id = db.Column(db.Integer, 
                         autoincrement=True, 
                         primary_key=True)
-    user_name = db.Column(db.String(50))
+    user_name = db.Column(db.String(50), 
+                          nullable=False)
     age = db.Column(db.Integer)
     occupation = db.Column(db.String(20))
     SF_resident = db.Column(db.Boolean)
-    email = db.Column(db.String(75))
-    password = db.Column(db.String(75))
+    email = db.Column(db.String(75), 
+                      nullable=False)
+    password = db.Column(db.String(75), 
+                         nullable=False)
 
     def __repr__(self): 
         """Provide respresentation of a user of the art app. """
@@ -206,5 +210,29 @@ class User(db.Model):
                                                                  self.user_name, 
                                                                  self.email)
 
+
+################################################################################
+# Helper functions
+
+def connect_to_db(app):
+    """Connect the database to our Flask app."""
+
+    # Configure to use our PostgreSQL database
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///arts'
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    db.app = app
+    db.init_app(app)
+
+
+if __name__ == "__main__":
+    # As a convenience, if we run this module interactively, it will
+    # leave you in a state of being able to work with the database
+    # directly.
+
+    # from server import app
+    app = Flask(__name__)
+    connect_to_db(app)
+    db.create_all()
+    print "Connected to DB."
 
     
