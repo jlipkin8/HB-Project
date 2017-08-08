@@ -18,16 +18,35 @@ if response.status_code == 200:
     sf_data = response.json()
 
 ################################################################################
-def load_artist(): 
+DATA_LEN = len(sf_data)
+
+def load_artists(): 
     """Load artists from sf_data into database.""" 
 
     print "Artists"
 
-    sf_data_len = len(sf_data)
-    for i in range(sf_data_len): 
+    for i in range(DATA_LEN): 
         artist = sf_data[i]['artist']
         lname, fname = artist.split(",")
         artist = Artist(lname=lname, fname=fname)
         db.session.add(artist)
 
     db.session.commit()
+
+
+def create_load_decades(): 
+    """Create decades from a for-loop""" 
+
+
+
+def load_media(): 
+    """Load media from sf_data into database. """ 
+
+    print "Media"
+
+    for i in range(DATA_LEN): 
+        medium = sf_data[i]['medium']
+        db.session.add(medium)
+
+    db.session.commit()
+

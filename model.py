@@ -38,8 +38,8 @@ class Artpiece(db.Model):
     artist_id = db.Column(db.Integer, 
                           db.ForeignKey('artists.artist_id'))
     #should the decade be an auto-incrementing integer or string like '00', '10'
-    decade_id = db.Column(db.Integer, 
-                          db.ForeignKey('decades.decade_id'))
+    timeperiod_id = db.Column(db.Integer, 
+                          db.ForeignKey('timeperiods.timeperiod_id'))
 
     medium_id = db.Column(db.Integer, 
                           db.ForeignKey('media.medium_id'))
@@ -76,15 +76,15 @@ class Artpiece(db.Model):
         return "<Artpiece art_id={} title={} >".format(self.art_id, self.title)
 
 
-class Decade(db.Model):
+class Timeperiod(db.Model):
     
-    __tablename__ = "decades"
+    __tablename__ = "timeperiod"
 
-    decade_id = db.Column(db.Integer, 
+    timeperiod_id = db.Column(db.Integer, 
                           autoincrement=True, 
                           primary_key=True)
-    start_date = db.Column(db.DateTime)
-    end_date = db.Column(db.DateTime)
+    start_date = db.Column(db.Integer)
+    end_date = db.Column(db.Integer)
 
     def __repr__(self): 
         """Provide representation of a decade."""
