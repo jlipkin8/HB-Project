@@ -75,7 +75,7 @@ class Artpiece(db.Model):
                               backref=db.backref("artpieces"))
 
     # Define relationship to decade 
-    decade = db.relationship("Decade", 
+    timeperiod = db.relationship("Timeperiod", 
                               backref=db.backref("artpieces"))
 
     # Define realtionship to medium 
@@ -94,7 +94,7 @@ class Artpiece(db.Model):
 
 class Timeperiod(db.Model):
     
-    __tablename__ = "timeperiod"
+    __tablename__ = "timeperiods"
 
     timeperiod_id = db.Column(db.Integer, 
                           autoincrement=True, 
