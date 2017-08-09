@@ -103,7 +103,8 @@ class Creditline(db.Model):
     creditline_id = db.Column(db.Integer, 
                               autoincrement=True, 
                               primary_key=True)
-    creditline_name = db.Column(db.String(200))
+    creditline_name = db.Column(db.String(200), 
+                                unique=True)
 
     def __repr__(self): 
         """Provide respresentation  of a creditline"""

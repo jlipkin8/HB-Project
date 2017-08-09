@@ -57,7 +57,11 @@ def create_timeperiods():
     db.session.commit()
 
 
+def load_creditlines(): 
+    """Load creditlines from sf_data into database.""" 
 
+    print "Creditlines"
+    
 
 def load_media(): 
     """Load media from sf_data into database. """ 
