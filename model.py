@@ -164,7 +164,8 @@ class Medium(db.Model):
                           autoincrement=True, 
                           primary_key=True)
 
-    medium_desc = db.Column(db.String(200))
+    medium_desc = db.Column(db.String(200), 
+                            unique=True)
 
     def __repr__(self): 
         """Provide respresentation of a medium."""

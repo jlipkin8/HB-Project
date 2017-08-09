@@ -58,12 +58,18 @@ def load_artpieces():
             timeperiod = timeperiod[:4]
             timeperiod = int(timeperiod)
 
-        tperiod_query =  Timeperiod.query.filter((Timeperiod.start_period <= timeperiod) & (Timeperiod.end_period >= timeperiod))
-        tperiod = tperiod_query.all()
+        tperiod_query =  Timeperiod.query.filter((Timeperiod.start_period <= timeperiod) 
+                                                  & (Timeperiod.end_period >= timeperiod))
+        tperiod = tperiod_query.first()
         toeruid_id = tperiod['timeperiod_id']
-        #at this point, 
 
         #get medium id 
+        medium = sf_data[i].get('medium', None)
+        #maybe there is an id associated with None
+        if medium is not None: 
+            medium_query = Medium.query.filter(Medium.medium_desc == medium)
+            medium_object = medium_query.first() 
+            medium_id = medium_object['medium_id']
 
         #get dimensions 
 
@@ -83,10 +89,9 @@ def create_timeperiods():
     end_period = 1700 
 
     while end_period < 2021: 
-        timeperiod = (start_period, end_period)
+        timeperiod = Timeperiod(start_period=start_period, end_period=end_period)
         db.session.add(timeperiod)
-        temperiod = end_period
-        start_period = temperiod + 1 
+        start_period = end_period + 1 
 
         if start_period < 1901: 
             end_period = end_period + 100 
@@ -103,8 +108,9 @@ def load_creditlines():
 
     for i in range(DATA_LEN): 
         creditline_name = sf_data[i]['credit_line']
-        creditline = Creditline(creditline_name= creditline_name)
-        db.session.add(creditline)
+        if creditline_name: 
+            creditline = Creditline(creditline_name=creditline_name)
+            db.session.add(creditline)
 
     db.session.commit()
     
@@ -116,7 +122,9 @@ def load_media():
 
     for i in range(DATA_LEN): 
         medium = sf_data[i]['medium']
-        db.session.add(medium)
+        if medium: 
+            medium = Medium(medium_desc=medium)
+            db.session.add(medium)
 
     db.session.commit()
 
