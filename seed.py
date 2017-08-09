@@ -25,13 +25,53 @@ def load_artists():
 
     print "Artists"
 
+    # might want to re-think splitting up the name
+    # might be harder to account for Uniqueness
+    # for i in range(DATA_LEN): 
+    #     artist = sf_data[i]['artist']
+    #     lname, fname = artist.split(",")
+    #     artist = Artist(lname=lname, fname=fname)
+    #     db.session.add(artist)
+
     for i in range(DATA_LEN): 
         artist = sf_data[i]['artist']
-        lname, fname = artist.split(",")
-        artist = Artist(lname=lname, fname=fname)
+        artist = Artist(name=name)
         db.session.add(artist)
 
     db.session.commit()
+
+
+def load_artpieces(): 
+    """Load artpieces from sf_data into database""" 
+
+    print "Artpieces"
+
+    for i in range(DATA_LEN): 
+        #get artist id 
+        artist_name = sf_data[i]['artist']
+        artist = Artist.query.filter(Artist.name == artist_name).first()
+        artist_id = artist["artist_id"]
+
+        #get timeperiod id
+        timeperiod = sf_data[i].get('created_at', None)
+        if timeperiod is not None: 
+            timeperiod = timeperiod[:4]
+            timeperiod = int(timeperiod)
+
+        tperiod_query =  Timeperiod.query.filter((Timeperiod.start_period <= timeperiod) & (Timeperiod.end_period >= timeperiod))
+        tperiod = tperiod_query.all()
+        toeruid_id = tperiod['timeperiod_id']
+        #at this point, 
+
+        #get medium id 
+
+        #get dimensions 
+
+        #get location desc 
+
+        #get title 
+
+        #get creditline
 
 
 def create_timeperiods(): 
@@ -52,7 +92,6 @@ def create_timeperiods():
             end_period = end_period + 100 
         else: 
             end_period = end_period + 10
-             
 
     db.session.commit()
 
@@ -61,6 +100,13 @@ def load_creditlines():
     """Load creditlines from sf_data into database.""" 
 
     print "Creditlines"
+
+    for i in range(DATA_LEN): 
+        creditline_name = sf_data[i]['credit_line']
+        creditline = Creditline(creditline_name= creditline_name)
+        db.session.add(creditline)
+
+    db.session.commit()
     
 
 def load_media(): 

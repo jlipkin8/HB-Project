@@ -8,6 +8,24 @@ db = SQLAlchemy()
 ################################################################################
 #Model definitions 
 
+# class Artist(db.Model):
+#     """Artist who made an artpiece"""
+
+#     __tablename__ = "artists"
+
+#     artist_id = db.Column(db.Integer,
+#                           autoincrement=True, 
+#                           primary_key=True)
+#     lname = db.Column(db.String(64), nullable=True)
+#     fname = db.Column(db.String(64), nullable=True)
+    
+#     def __repr__(self): 
+#         """Provide representation of Artist when printed. """
+
+#         return "<Artist artist_id={} fname={} lname={} >".format(self.artist_id,
+#                                                              self.fname, 
+#                                                              self.lname)
+
 class Artist(db.Model):
     """Artist who made an artpiece"""
 
@@ -16,15 +34,13 @@ class Artist(db.Model):
     artist_id = db.Column(db.Integer,
                           autoincrement=True, 
                           primary_key=True)
-    lname = db.Column(db.String(64), nullable=True)
-    fname = db.Column(db.String(64), nullable=True)
+    name = db.Column(db.String(100), nullable=True, unique=True)
     
     def __repr__(self): 
         """Provide representation of Artist when printed. """
 
-        return "<Artist artist_id={} fname={} lname={} >".format(self.artist_id,
-                                                             self.fname, 
-                                                             self.lname)
+        return "<Artist artist_id={} name={} >".format(self.artist_id,
+                                                             self.name)
 
 
 class Artpiece(db.Model):
