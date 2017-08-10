@@ -1,9 +1,10 @@
 """Utility file to seed arts database from sfdata website """
 
 import requests 
-from sqlalchemy import fun 
+# from sqlalchemy import fun 
 
-from model import * 
+from model import *
+
 
 ################################################################################
 """Get art data from SF data """
@@ -18,35 +19,39 @@ if response.status_code == 200:
     sf_data = response.json()
 
 ################################################################################
-DATA_LEN = len(sf_data)
+# DATA_LEN = len(sf_data)
 
-create_timeperiods()
+# create_timeperiods()
 
-for i in range(DATA_LEN):
-    # load one row in Artist 
-    load_artist(sf_data[i])
+# for i in range(DATA_LEN):
+#     # load one row in Artist 
+#     load_artist(sf_data[i])
 
-    #load one row in Artpiece 
-    load_artpiece(sf_data[i])
+#     #load one row in Artpiece 
+#     load_artpiece(sf_data[i])
 
-    #load one row in Creditline 
-    load_creditline(sf_data[i])
+#     #load one row in Creditline 
+#     load_creditline(sf_data[i])
 
-    #load obe row in ArtistArtpiece
-    load_artist_artpiece(sf_data[i])
-    
-    #load one row in media
-    load_medium(sf_data[i])
-# end of for-loop 
+#     #load obe row in ArtistArtpiece
+#     load_artist_artpiece(sf_data[i])
+
+#     #load one row in media
+#     load_medium(sf_data[i])
+# # end of for-loop 
 
 ################################################################################
 # function definitions
 
+
+artists = []
 def load_artist(sf_datum): 
     """Load artist from sf_data into database.""" 
+    print "made it into load_artists"
 
-    name = sf_datum['artist']
-    if name: 
+    name = sf_datum.get('artist', '')
+    if (name not in artists) and (name): 
+        artists.append(name)
         artist = Artist(name=name)
         db.session.add(artist)
 
@@ -95,11 +100,13 @@ def load_artpiece(sf_datum):
         creditline_id = credit_line['creditline_id']
 
 
+creditlines = []
 def load_creditline(sf_datum):
     """Load creditline from sf_data into database."""
 
-    creditline_name = sf_datum['credit_line']
-    if creditline_name: 
+    creditline_name = sf_datum.get('credit_line', '')
+    if creditline_name not in creditlines and creditline_name:
+        creditlines.append(creditline_name)  
         creditline = Creditline(creditline_name=creditline_name)
         db.session.add(creditline)
 
@@ -156,3 +163,24 @@ def create_timeperiods():
             end_period = end_period + 10
 
     db.session.commit()
+
+
+################################################################################
+
+if __name__ == "__main__": 
+    app = Flask(__name__)
+    connect_to_db(app)
+    db.create_all()
+
+    # seeding tables with example data 
+    example_data = sf_data[10:21]
+    EX_LEN = len(example_data)
+
+    for i in range(EX_LEN): 
+        # load_artist(example_data[i])
+        load_creditline(example_data[i])
+
+    #testing out create_timeperiods 
+    create_timeperiods()
+
+
