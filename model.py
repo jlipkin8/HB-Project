@@ -114,6 +114,7 @@ class Creditline(db.Model):
 class ArtistArtpiece(db.Model):
     """Arist and an artpiece.""" 
 
+    print "Making ArtistArtpiece"
     __tablename__ = "artistartpieces"
 
     artist_art_id = db.Column(db.Integer, 

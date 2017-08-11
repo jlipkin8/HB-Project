@@ -1,7 +1,7 @@
 """Utility file to seed arts database from sfdata website """
 
 import requests 
-# from sqlalchemy import fun 
+from sqlalchemy import func
 
 from model import *
 import ast
@@ -128,6 +128,13 @@ def load_artpiece(sf_datum):
     db.session.commit()
 
 
+    # Get the Max user_id in the database
+    result = db.session.query(func.max(Artpiece.art_id)).one()
+    max_id = int(result[0])
+    load_artist_artpiece(artist_id, max_id)
+
+
+
 creditlines = []
 def load_creditline(sf_datum):
     """Load creditline from sf_data into database."""
@@ -142,18 +149,8 @@ def load_creditline(sf_datum):
 
 
 #thinking about putting this load function inside the load_artpiece on 
-def load_artist_artpiece(sf_datum, artist, artpiece): 
+def load_artist_artpiece(artist_id, art_id): 
     """Load artist and artpiece from sf_data into database"""
-
-    #retrieve artist_id from Artist table
-    artist_name = sf_datum['artist']
-    artist = Artist.query.filter(Artist.artist_name == artist_name).first()
-    artist_id = artist[artist_id]
-
-    #retrieve artpiece_id from Artpiece table 
-    art_title = sf_datum['title']
-    art = Artpiece.query.filter(Artpiece.title == art_title).first()
-    art_id = art['art_id']
 
     artistartpiece = ArtistArtPiece(artist_id=artist_id, art_id=art_id)
     db.session.add(artistartpiece)
