@@ -4,6 +4,7 @@ import requests
 # from sqlalchemy import fun 
 
 from model import *
+import ast
 
 
 ################################################################################
@@ -58,34 +59,47 @@ def load_artist(sf_datum):
     db.session.commit()
 
 
+untitled_count = 1; 
 def load_artpiece(sf_datum):
     """Load artpiece from sf_data into database."""
 
     #get artist id 
-    artist_name = sf_datum['artist']
-    artist = Artist.query.filter(Artist.name == artist_name).first()
-    artist_id = artist["artist_id"]
-    
-    #get timeperiod id
-    timeperiod = sf_datum.get('created_at', None)
-    if timeperiod is not None: 
-        timeperiod = timeperiod[:4]
-        timeperiod = int(timeperiod)
+    artist_name = sf_datum.get('artist', '')
+    if artist_name:  
+        artist = Artist.query.filter(Artist.name == artist_name).first()
+        artist_id = artist.artist_id
 
-    tperiod_query =  Timeperiod.query.filter((Timeperiod.start_period <= timeperiod) 
-                                              & (Timeperiod.end_period >= timeperiod))
-    tperiod = tperiod_query.first()
-    tperiod_id = tperiod['timeperiod_id']
+    #get timeperiod id
+    created_at = sf_datum.get('created_at', '')
+    if created_at: 
+        time_period = int(created_at[:4])
+        time_query =  Timeperiod.query.filter(((Timeperiod.start_period < time_period)
+                                            | (Timeperiod.start_period == time_period))
+                                            & ((Timeperiod.end_period >  time_period)
+                                            | (Timeperiod.end_period == time_period)))
+        returned_time_period= time_query.first()
+        tperiod_id = returned_time_period.timeperiod_id
+    else: 
+        tperiod_id = None
 
     #get medium id 
-    medium = sf_datum.get('medium', None)
+    medium = sf_datum.get('medium', '')
     #maybe there is an id associated with None
+
     if medium: 
         medium_query = Medium.query.filter(Medium.medium_desc == medium)
         medium_object = medium_query.first() 
-        medium_id = medium_object['medium_id']
+        print medium_object
+        mediumid = medium_object.medium_id
+    else: 
+        mediumid = None
 
-    #get dimensions 
+    #get dimensions
+    # dimensions = sf_datum['geometry']['coordinates']
+    # print "\n"
+    dimensions = sf_datum['geometry']
+    geo_dict = ast.literal_eval(dimensions)
+    coordinates = geo_dict['coordinates']
 
     #get location desc
     loc_desc = sf_datum.get('location_description', '')
@@ -97,7 +111,21 @@ def load_artpiece(sf_datum):
     creditline = sf_datum.get('credit_line', '')
     if creditline: 
         credit_line= Creditline.query.filter(Creditline.creditline_name == creditline).first()
-        creditline_id = credit_line['creditline_id']
+        creditline_id = credit_line.creditline_id
+
+    else: 
+        creditline_id = None
+
+    # create artpiece instance 
+    artpiece = Artpiece(artist_id=artist_id,
+                        timeperiod_id=tperiod_id, 
+                        medium_id=mediumid, 
+                        dimensions=coordinates, 
+                        loc_desc=loc_desc, 
+                        title=title, 
+                        creditline_id=creditline_id)
+    db.session.add(artpiece)
+    db.session.commit()
 
 
 creditlines = []
@@ -113,7 +141,8 @@ def load_creditline(sf_datum):
     db.session.commit()
 
 
-def load_artist_artpiece(sf_datum): 
+#thinking about putting this load function inside the load_artpiece on 
+def load_artist_artpiece(sf_datum, artist, artpiece): 
     """Load artist and artpiece from sf_data into database"""
 
     #retrieve artist_id from Artist table
@@ -132,11 +161,13 @@ def load_artist_artpiece(sf_datum):
     db.session.commit()
 
 
+media = []
 def load_medium(sf_datum): 
     """Load medium from sf_data into database."""
 
-    medium = sf_datum['medium']
-    if medium: 
+    medium = sf_datum.get('medium', '') 
+    if medium and medium not in media:
+            media.append(medium)
             medium = Medium(medium_desc=medium)
             db.session.add(medium)
 
@@ -176,11 +207,16 @@ if __name__ == "__main__":
     example_data = sf_data[10:21]
     EX_LEN = len(example_data)
 
+    create_timeperiods()
+
     for i in range(EX_LEN): 
-        # load_artist(example_data[i])
+        load_artist(example_data[i])
         load_creditline(example_data[i])
+        load_medium(example_data[i])
+        load_artpiece(example_data[i])
+
 
     #testing out create_timeperiods 
-    create_timeperiods()
+    
 
 

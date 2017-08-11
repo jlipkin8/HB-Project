@@ -88,10 +88,10 @@ class Timeperiod(db.Model):
     def __repr__(self): 
         """Provide representation of a decade."""
 
-        return "<Decade decade_id={} start_date={} end_date={} >".format(
-                                                                self.decade_id,
-                                                                self.start_date, 
-                                                                self.end_date)
+        return "<Timeperiod timeperiod_id={} start_period={} end_period={} >".format(
+                                                                self.timeperiod_id,
+                                                                self.start_period, 
+                                                                self.end_period)
 
 
 class Creditline(db.Model):
