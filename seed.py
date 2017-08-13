@@ -152,7 +152,7 @@ def load_creditline(sf_datum):
 def load_artist_artpiece(artist_id, art_id): 
     """Load artist and artpiece from sf_data into database"""
 
-    artistartpiece = ArtistArtPiece(artist_id=artist_id, art_id=art_id)
+    artistartpiece = ArtistArtpiece(artist_id=artist_id, art_id=art_id)
     db.session.add(artistartpiece)
 
     db.session.commit()
