@@ -5,7 +5,7 @@ from sqlalchemy import func
 
 from model import *
 import ast
-
+import re
 
 ################################################################################
 """Get art data from SF data """
@@ -44,22 +44,31 @@ if response.status_code == 200:
 ################################################################################
 # function definitions
 
-
 def load_artist(sf_datum): 
     """Load artist from sf_data into database.""" 
-    print "made it into load_artists"
+    # print "made it into load_artists"
+    pattern1 = re.compile("(\w)+, (\w)+")
+    pattern2 = re.compile("(\w)+, (\w)+ (\w)+")
+
+    f = open('weird_names.txt','a') #open text file to store weird names
 
     name = sf_datum.get('artist', '')
-    already_exists = Artist.query.filter(Artist.name == name).first()
 
-    if not already_exists: 
-        artist = Artist(name=name)
-        db.session.add(artist)
-        
-    db.session.commit()
+    if pattern1.match(name) or pattern2.match(name): 
+        print name
+    else: 
+        f.write(name)
 
 
-untitled_count = 1; 
+    # already_exists = Artist.query.filter(Artist.name == name).first()
+    # if not already_exists: 
+    #     artist = Artist(name=name)
+    #     db.session.add(artist)
+
+    # db.session.commit()
+
+
+
 def load_artpiece(sf_datum):
     """Load artpiece from sf_data into database."""
 
@@ -89,7 +98,7 @@ def load_artpiece(sf_datum):
     if medium: 
         medium_query = Medium.query.filter(Medium.medium_desc == medium)
         medium_object = medium_query.first() 
-        print medium_object
+        # print medium_object
         mediumid = medium_object.medium_id
     else: 
         mediumid = None
@@ -134,21 +143,18 @@ def load_artpiece(sf_datum):
     load_artist_artpiece(artist_id, max_id)
 
 
-
-creditlines = []
 def load_creditline(sf_datum):
     """Load creditline from sf_data into database."""
 
     creditline_name = sf_datum.get('credit_line', '')
-    if creditline_name not in creditlines and creditline_name:
-        creditlines.append(creditline_name)  
+    already_exists = Creditline.query.filter(Creditline.creditline_name == creditline_name).first()
+    if creditline_name and not already_exists: 
         creditline = Creditline(creditline_name=creditline_name)
         db.session.add(creditline)
 
     db.session.commit()
 
 
-#thinking about putting this load function inside the load_artpiece on 
 def load_artist_artpiece(artist_id, art_id): 
     """Load artist and artpiece from sf_data into database"""
 
@@ -158,13 +164,12 @@ def load_artist_artpiece(artist_id, art_id):
     db.session.commit()
 
 
-media = []
 def load_medium(sf_datum): 
     """Load medium from sf_data into database."""
 
-    medium = sf_datum.get('medium', '') 
-    if medium and medium not in media:
-            media.append(medium)
+    medium = sf_datum.get('medium', '')
+    already_exists = Medium.query.filter(Medium.medium_desc == medium).first() 
+    if medium and not already_exists:
             medium = Medium(medium_desc=medium)
             db.session.add(medium)
 
@@ -175,7 +180,7 @@ def load_medium(sf_datum):
 def create_timeperiods(): 
     """Create timeperiods from a for-loop""" 
 
-    print "Timeperiods"
+    # print "Timeperiods"
 
     start_period = 0 
     end_period = 1700 
@@ -206,11 +211,11 @@ if __name__ == "__main__":
 
     create_timeperiods()
 
-    for i in range(EX_LEN): 
+    for i in range(sf_data): 
         load_artist(example_data[i])
-        load_creditline(example_data[i])
-        load_medium(example_data[i])
-        load_artpiece(example_data[i])
+        # load_creditline(example_data[i])
+        # load_medium(example_data[i])
+        # load_artpiece(example_data[i])
 
 
     #testing out create_timeperiods 
