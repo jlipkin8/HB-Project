@@ -47,27 +47,92 @@ if response.status_code == 200:
 def load_artist(sf_datum): 
     """Load artist from sf_data into database.""" 
     # print "made it into load_artists"
-    pattern1 = re.compile("(\w)+, (\w)+")
-    pattern2 = re.compile("(\w)+, (\w)+ (\w)+")
-
-    f = open('weird_names.txt','a') #open text file to store weird names
+     # # ((\w)+(\/\w+)?), ((\w)+((\/\w+)?|( and){0}))
+    pattern1 = re.compile("(-?\w)+, (\w)+ and (\w)+, (\w)+") 
+    pattern2 = re.compile("(-?\w)+, (\w)+ and (\w)+") 
+    pattern3 = re.compile("(\w)+, (\w)+, (\w)+")
+    pattern4 = re.compile("(-?\w)+, (\w)+ (\(?\w.?\)?)*")
+    pattern5 = re.compile("(-?\w)+,?.? (\w)*")
+    pattern6 = re.compile("((\w)+(\/\w+)?), (\w)+((\/\w+))")
 
     name = sf_datum.get('artist', '')
+    print name
 
-    if pattern1.match(name) or pattern2.match(name): 
-        print name
-    else: 
-        f.write(name)
+    if re.match(pattern1, name): 
+        # Chamberlain, Ann and Lubell, Bernie
+        name1, name2 = re.split(" and ", name)
+        already_exists = Artist.query.filter(Artist.name == name1).first()
+        if not already_exists: 
+            artist = Artist(name=name1)
+            db.session.add(artist)
 
+        db.session.commit()
+        already_exists = Artist.query.filter(Artist.name == name2).first()
+        if not already_exists: 
+            artist = Artist(name=name2)
+            db.session.add(artist)
+        db.session.commit()
+        print name1, "   ",  name2
+    elif re.match(pattern2, name):
+        # Cervantes, Morales and Poethig
+        print "pattern2"
+        names = name.replace(" and ", ", ")
+        names = names.split(", ")
+        for name in names: 
+            already_exists = Artist.query.filter(Artist.name.like('%'+ name + '%')).first()
+            if not already_exists: 
+                artist = Artist(name=name)
+                db.session.add(artist)
+            db.session.commit()
+    elif re.match(pattern3, name):
+        # Collins, Goto, Reiko 
+        print "pattern 3"
+        names = name.split(", ")
+        for name in names: 
+            already_exists = Artist.query.filter(Artist.name.like('%'+ name + '%')).first()
+            if not already_exists: 
+                artist = Artist(name=name)
+                db.session.add(artist)
+            db.session.commit()
+    elif re.match(pattern4, name):
+        # Chesse, Ralph A.
+        print "pattern4"
+        m = re.match(pattern4, name)  
+        name = m.group(0)
+        already_exists = Artist.query.filter(Artist.name == name).first()
+        if not already_exists: 
+            artist = Artist(name=name)
+            db.session.add(artist)
+        db.session.commit()
+    elif re.match(pattern5, name):
+        # Cheng, Carl
+        m = re.match(pattern5, name)
+        name = m.group(0)
+        already_exists = Artist.query.filter(Artist.name == name).first()
+        if not already_exists: 
+            artist = Artist(name=name)
+            db.session.add(artist)
+        db.session.commit()
+    elif re.match(pattern6, name): 
+        names = name.replace("/",", ")
+        name_match = re.match(r"(?P<f_name>\w+), (?P<l_name>\w+), (?P<fname_two>\w+), (?P<l_name_two>\w+)", names)
+        names_dict = name_match.groupdict()
+        name1 = names_dict["l_name"] + ", " + names_dict["f_name"]
+        name2 = names_dict["l_name_two"] + ", " + names_dict["fname_two"]
+        already_exists = Artist.query.filter(Artist.name == name1).first()
+        if not already_exists: 
+            artist = Artist(name=name1)
+            db.session.add(artist)
 
-    # already_exists = Artist.query.filter(Artist.name == name).first()
-    # if not already_exists: 
-    #     artist = Artist(name=name)
-    #     db.session.add(artist)
+        db.session.commit()
+        already_exists = Artist.query.filter(Artist.name == name2).first()
+        if not already_exists: 
+            artist = Artist(name=name2)
+            db.session.add(artist)
+        db.session.commit()
 
-    # db.session.commit()
-
-
+    print "\n\n"
+    
 
 def load_artpiece(sf_datum):
     """Load artpiece from sf_data into database."""
@@ -76,20 +141,13 @@ def load_artpiece(sf_datum):
     artist_name = sf_datum.get('artist', '')
     if artist_name:  
         artist = Artist.query.filter(Artist.name == artist_name).first()
-        artist_id = artist.artist_id
+        if artist: 
+            artist_id = artist.artist_id
+        else: 
+            artist_id = None
 
-    #get timeperiod id
-    created_at = sf_datum.get('created_at', '')
-    if created_at: 
-        time_period = int(created_at[:4])
-        time_query =  Timeperiod.query.filter(((Timeperiod.start_period < time_period)
-                                            | (Timeperiod.start_period == time_period))
-                                            & ((Timeperiod.end_period >  time_period)
-                                            | (Timeperiod.end_period == time_period)))
-        returned_time_period= time_query.first()
-        tperiod_id = returned_time_period.timeperiod_id
-    else: 
-        tperiod_id = None
+    #get timeperiod 
+    timeperiod = sf_datum.get('created_at', '')
 
     #get medium id 
     medium = sf_datum.get('medium', '')
@@ -127,7 +185,7 @@ def load_artpiece(sf_datum):
 
     # create artpiece instance 
     artpiece = Artpiece(artist_id=artist_id,
-                        timeperiod_id=tperiod_id, 
+                        timeperiod=timeperiod, 
                         medium_id=mediumid, 
                         dimensions=coordinates, 
                         loc_desc=loc_desc, 
@@ -206,19 +264,14 @@ if __name__ == "__main__":
     db.create_all()
 
     # seeding tables with example data 
-    example_data = sf_data[10:21]
+    example_data = sf_data[:200]
     EX_LEN = len(example_data)
+    SF_LEN = len(sf_data)
 
-    create_timeperiods()
-
-    for i in range(sf_data): 
+    for i in range(EX_LEN): 
         load_artist(example_data[i])
         # load_creditline(example_data[i])
         # load_medium(example_data[i])
         # load_artpiece(example_data[i])
-
-
-    #testing out create_timeperiods 
-    
 
 
