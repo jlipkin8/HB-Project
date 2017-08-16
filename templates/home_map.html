@@ -25,19 +25,33 @@
         <input type="text" name="artistname" id="artist">
         <input type="submit" value="Submit">
     </form>
+    <script src="https://code.jquery.com/jquery.js"></script>
     <script>
       var map;
       function initMap() {
         map = new google.maps.Map(document.getElementById('art-map'), {
           center: {lat: 37.7748, lng: -122.435},
           zoom: 13
+          
         });
+
+        // retrieves artpiece info wiht AJAX
+          $.get("/art-pieces", function(artpieces){
+            markers = artpieces["markers"];
+            for(var marker in markers){
+              artpiece = markers[marker]
+              marker = new google.maps.Marker({
+                position: new google.maps.LatLng(artpiece.lat, artpiece.lng),
+                map: map,
+                title: artpiece.name
+              });
+            }
+          });
+
       }
     </script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBtKiwRX-zLzkYEixhVxUlRPxdj0AKxRCM&callback=initMap"
   type="text/javascript">
     </script>
-    <script src="googlemaps_demo.js"></script>
-
 </body>
 </html>
