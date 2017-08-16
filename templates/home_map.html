@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style type="text/css">
+        html, body {
+             height: 100%; 
+             margin: 0; 
+             padding: 0; 
+        }
+        #art-map { 
+            height: 75%; 
+            background-color: pink;  
+        }
+        form {
+            margin: 20px; 
+        }
+    </style>
+</head>
+
+<body>
+    <h1>SF Civic Art</h1>
+    <div id="art-map"></div>
+    <form action="#">
+        <label for="artist">Seach by Artist Name:</label>
+        <input type="text" name="artistname" id="artist">
+        <input type="submit" value="Submit">
+    </form>
+    <script>
+      var map;
+      function initMap() {
+        map = new google.maps.Map(document.getElementById('art-map'), {
+          center: {lat: 37.7748, lng: -122.435},
+          zoom: 13
+        });
+      }
+    </script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBtKiwRX-zLzkYEixhVxUlRPxdj0AKxRCM&callback=initMap"
+  type="text/javascript">
+    </script>
+    <script src="googlemaps_demo.js"></script>
+
+</body>
+</html>

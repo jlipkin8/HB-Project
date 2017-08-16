@@ -1,3 +1,4 @@
 env/ 
 *.pyc 
 data_model_pics/
+secrets.sh 
