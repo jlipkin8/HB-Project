@@ -66,12 +66,10 @@ def load_artist(sf_datum):
             artist = Artist(name=name1)
             db.session.add(artist)
 
-        db.session.commit()
         already_exists = Artist.query.filter(Artist.name == name2).first()
         if not already_exists: 
             artist = Artist(name=name2)
             db.session.add(artist)
-        db.session.commit()
         print name1, "   ",  name2
     elif re.match(pattern2, name):
         # Cervantes, Morales and Poethig
@@ -83,7 +81,6 @@ def load_artist(sf_datum):
             if not already_exists: 
                 artist = Artist(name=name)
                 db.session.add(artist)
-            db.session.commit()
     elif re.match(pattern3, name):
         # Collins, Goto, Reiko 
         print "pattern 3"
@@ -93,7 +90,6 @@ def load_artist(sf_datum):
             if not already_exists: 
                 artist = Artist(name=name)
                 db.session.add(artist)
-            db.session.commit()
     elif re.match(pattern4, name):
         # Chesse, Ralph A.
         print "pattern4"
@@ -103,7 +99,6 @@ def load_artist(sf_datum):
         if not already_exists: 
             artist = Artist(name=name)
             db.session.add(artist)
-        db.session.commit()
     elif re.match(pattern5, name):
         # Cheng, Carl
         m = re.match(pattern5, name)
@@ -112,8 +107,8 @@ def load_artist(sf_datum):
         if not already_exists: 
             artist = Artist(name=name)
             db.session.add(artist)
-        db.session.commit()
-    elif re.match(pattern6, name): 
+    elif re.match(pattern6, name):
+        # Cheng/Smith, Carl/Jon
         names = name.replace("/",", ")
         name_match = re.match(r"(?P<f_name>\w+), (?P<l_name>\w+), (?P<fname_two>\w+), (?P<l_name_two>\w+)", names)
         names_dict = name_match.groupdict()
@@ -123,14 +118,12 @@ def load_artist(sf_datum):
         if not already_exists: 
             artist = Artist(name=name1)
             db.session.add(artist)
-
-        db.session.commit()
         already_exists = Artist.query.filter(Artist.name == name2).first()
         if not already_exists: 
             artist = Artist(name=name2)
             db.session.add(artist)
-        db.session.commit()
-
+        
+    db.session.commit()
     print "\n\n"
     
 
@@ -234,28 +227,6 @@ def load_medium(sf_datum):
     db.session.commit()
 
 
-
-def create_timeperiods(): 
-    """Create timeperiods from a for-loop""" 
-
-    # print "Timeperiods"
-
-    start_period = 0 
-    end_period = 1700 
-
-    while end_period < 2021: 
-        timeperiod = Timeperiod(start_period=start_period, end_period=end_period)
-        db.session.add(timeperiod)
-        start_period = end_period + 1 
-
-        if start_period < 1901: 
-            end_period = end_period + 100 
-        else: 
-            end_period = end_period + 10
-
-    db.session.commit()
-
-
 ################################################################################
 
 if __name__ == "__main__": 
@@ -264,7 +235,7 @@ if __name__ == "__main__":
     db.create_all()
 
     # seeding tables with example data 
-    example_data = sf_data[:200]
+    example_data = sf_data[:20]
     EX_LEN = len(example_data)
     SF_LEN = len(sf_data)
 
