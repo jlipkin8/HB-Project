@@ -44,6 +44,20 @@ if response.status_code == 200:
 ################################################################################
 # function definitions
 
+def create_artist(does_exist, name):
+    """Create artist object and add to session""" 
+    if not does_exist: 
+        artist = Artist(name=name)
+        db.session.add(artist)
+
+
+def query_multiple_names(names):
+    """Check if name(or something like name) in names exists in database"""
+    for name in names: 
+        already_exists = Artist.query.filter(Artist.name.like('%'+ name + '%')).first()
+        create_artist(already_exists, name)
+
+
 def load_artist(sf_datum): 
     """Load artist from sf_data into database.""" 
     # print "made it into load_artists"
@@ -56,57 +70,44 @@ def load_artist(sf_datum):
     pattern6 = re.compile("((\w)+(\/\w+)?), (\w)+((\/\w+))")
 
     name = sf_datum.get('artist', '')
-    print name
 
     if re.match(pattern1, name): 
         # Chamberlain, Ann and Lubell, Bernie
         name1, name2 = re.split(" and ", name)
         already_exists = Artist.query.filter(Artist.name == name1).first()
-        if not already_exists: 
-            artist = Artist(name=name1)
-            db.session.add(artist)
+        create_artist(already_exists, name1)
 
         already_exists = Artist.query.filter(Artist.name == name2).first()
-        if not already_exists: 
-            artist = Artist(name=name2)
-            db.session.add(artist)
-        print name1, "   ",  name2
+        create_artist(already_exists, name2)
     elif re.match(pattern2, name):
         # Cervantes, Morales and Poethig
-        print "pattern2"
         names = name.replace(" and ", ", ")
         names = names.split(", ")
-        for name in names: 
-            already_exists = Artist.query.filter(Artist.name.like('%'+ name + '%')).first()
-            if not already_exists: 
-                artist = Artist(name=name)
-                db.session.add(artist)
+        query_multiple_names(names)
+        # for name in names: 
+        #     already_exists = Artist.query.filter(Artist.name.like('%'+ name + '%')).first()
+        #     create_artist(already_exists, name)
     elif re.match(pattern3, name):
         # Collins, Goto, Reiko 
         print "pattern 3"
         names = name.split(", ")
-        for name in names: 
-            already_exists = Artist.query.filter(Artist.name.like('%'+ name + '%')).first()
-            if not already_exists: 
-                artist = Artist(name=name)
-                db.session.add(artist)
+        query_multiple_names(names)
+        # for name in names: 
+        #     already_exists = Artist.query.filter(Artist.name.like('%'+ name + '%')).first()
+        #     create_artist(already_exists, name)
     elif re.match(pattern4, name):
         # Chesse, Ralph A.
         print "pattern4"
         m = re.match(pattern4, name)  
         name = m.group(0)
         already_exists = Artist.query.filter(Artist.name == name).first()
-        if not already_exists: 
-            artist = Artist(name=name)
-            db.session.add(artist)
+        create_artist(already_exists, name)
     elif re.match(pattern5, name):
         # Cheng, Carl
         m = re.match(pattern5, name)
         name = m.group(0)
         already_exists = Artist.query.filter(Artist.name == name).first()
-        if not already_exists: 
-            artist = Artist(name=name)
-            db.session.add(artist)
+        create_artist(already_exists, name)
     elif re.match(pattern6, name):
         # Cheng/Smith, Carl/Jon
         names = name.replace("/",", ")
@@ -115,13 +116,9 @@ def load_artist(sf_datum):
         name1 = names_dict["l_name"] + ", " + names_dict["f_name"]
         name2 = names_dict["l_name_two"] + ", " + names_dict["fname_two"]
         already_exists = Artist.query.filter(Artist.name == name1).first()
-        if not already_exists: 
-            artist = Artist(name=name1)
-            db.session.add(artist)
+        create_artist(already_exists, name1)
         already_exists = Artist.query.filter(Artist.name == name2).first()
-        if not already_exists: 
-            artist = Artist(name=name2)
-            db.session.add(artist)
+        create_artist(already_exists, name2)
         
     db.session.commit()
     print "\n\n"
