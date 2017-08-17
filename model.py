@@ -34,19 +34,15 @@ class Artpiece(db.Model):
     art_id = db.Column(db.Integer,
                           autoincrement=True, 
                           primary_key=True)
-    artist_id = db.Column(db.Integer, 
-                          db.ForeignKey('artists.artist_id'))
-    #should the decade be an auto-incrementing integer or string like '00', '10'
-    # timeperiod_id = db.Column(db.Integer, 
-    #                       db.ForeignKey('timeperiods.timeperiod_id'))
-
+    # artist_id = db.Column(db.Integer, 
+    #                       db.ForeignKey('artists.artist_id'))
+  
     medium_id = db.Column(db.Integer, 
                           db.ForeignKey('media.medium_id'))
     dimensions = db.Column(db.ARRAY(db.Numeric, dimensions=1))
 
     loc_desc = db.Column(db.String(300))
-    #would 300 be too long? 
-
+  
     #why make it a separate table? You are not searching by date 
     timeperiod = db.Column(db.String(100))
 
@@ -54,11 +50,6 @@ class Artpiece(db.Model):
 
     creditline_id = db.Column(db.Integer, 
                               db.ForeignKey('creditlines.creditline_id'))
-
-
-    # Define relationship to artist 
-    artist = db.relationship("Artist", 
-                              backref=db.backref("artpieces"))
 
     # Define realtionship to medium 
     medium = db.relationship("Medium", 
@@ -72,25 +63,6 @@ class Artpiece(db.Model):
         """Provide representation of an artpiece"""
 
         return "<Artpiece art_id={} title={} >".format(self.art_id, self.title)
-
-
-# class Timeperiod(db.Model):
-    
-#     __tablename__ = "timeperiods"
-
-#     timeperiod_id = db.Column(db.Integer, 
-#                           autoincrement=True, 
-#                           primary_key=True)
-#     start_period = db.Column(db.Integer)
-#     end_period = db.Column(db.Integer)
-
-#     def __repr__(self): 
-#         """Provide representation of a decade."""
-
-#         return "<Timeperiod timeperiod_id={} start_period={} end_period={} >".format(
-#                                                                 self.timeperiod_id,
-#                                                                 self.start_period, 
-#                                                                 self.end_period)
 
 
 class Creditline(db.Model):

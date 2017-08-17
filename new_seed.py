@@ -51,11 +51,18 @@ def create_artist(does_exist, name):
         db.session.add(artist)
 
 
-def query_multiple_names(names):
+def chck_mult_nms_create_artists(names):
     """Check if name(or something like name) in names exists in database"""
     for name in names: 
         already_exists = Artist.query.filter(Artist.name.like('%'+ name + '%')).first()
         create_artist(already_exists, name)
+
+
+def chck_nm_create_artist(name): 
+    """Check name if already in database, then create artist"""
+
+    already_exists = Artist.query.filter(Artist.name == name).first()
+    create_artist(already_exists, name)
 
 
 def load_artist(sf_datum): 
@@ -74,40 +81,27 @@ def load_artist(sf_datum):
     if re.match(pattern1, name): 
         # Chamberlain, Ann and Lubell, Bernie
         name1, name2 = re.split(" and ", name)
-        already_exists = Artist.query.filter(Artist.name == name1).first()
-        create_artist(already_exists, name1)
-
-        already_exists = Artist.query.filter(Artist.name == name2).first()
-        create_artist(already_exists, name2)
+        chck_nm_create_artist(name1)
+        chck_nm_create_artist(name2)
     elif re.match(pattern2, name):
         # Cervantes, Morales and Poethig
         names = name.replace(" and ", ", ")
         names = names.split(", ")
-        query_multiple_names(names)
-        # for name in names: 
-        #     already_exists = Artist.query.filter(Artist.name.like('%'+ name + '%')).first()
-        #     create_artist(already_exists, name)
+        chck_mult_nms_create_artists(names)
     elif re.match(pattern3, name):
         # Collins, Goto, Reiko 
-        print "pattern 3"
         names = name.split(", ")
-        query_multiple_names(names)
-        # for name in names: 
-        #     already_exists = Artist.query.filter(Artist.name.like('%'+ name + '%')).first()
-        #     create_artist(already_exists, name)
+        chck_mult_nms_create_artists(names)
     elif re.match(pattern4, name):
         # Chesse, Ralph A.
-        print "pattern4"
         m = re.match(pattern4, name)  
         name = m.group(0)
-        already_exists = Artist.query.filter(Artist.name == name).first()
-        create_artist(already_exists, name)
+        chck_nm_create_artist(name)
     elif re.match(pattern5, name):
         # Cheng, Carl
         m = re.match(pattern5, name)
         name = m.group(0)
-        already_exists = Artist.query.filter(Artist.name == name).first()
-        create_artist(already_exists, name)
+        chck_nm_create_artist(name)
     elif re.match(pattern6, name):
         # Cheng/Smith, Carl/Jon
         names = name.replace("/",", ")
@@ -115,10 +109,8 @@ def load_artist(sf_datum):
         names_dict = name_match.groupdict()
         name1 = names_dict["l_name"] + ", " + names_dict["f_name"]
         name2 = names_dict["l_name_two"] + ", " + names_dict["fname_two"]
-        already_exists = Artist.query.filter(Artist.name == name1).first()
-        create_artist(already_exists, name1)
-        already_exists = Artist.query.filter(Artist.name == name2).first()
-        create_artist(already_exists, name2)
+        chck_nm_create_artist(name1)
+        chck_nm_create_artist(name2)
         
     db.session.commit()
     print "\n\n"
@@ -127,22 +119,23 @@ def load_artist(sf_datum):
 def load_artpiece(sf_datum):
     """Load artpiece from sf_data into database."""
 
+    #probably don't need the artist name/id in this one 
     #get artist id 
-    artist_name = sf_datum.get('artist', '')
-    if artist_name:  
-        artist = Artist.query.filter(Artist.name == artist_name).first()
-        if artist: 
-            artist_id = artist.artist_id
-        else: 
-            artist_id = None
+    # artist_name = sf_datum.get('artist', '')
+    # if artist_name:  
+    #     artist = Artist.query.filter(Artist.name == artist_name).first()
+    #     if artist: 
+    #         artist_id = artist.artist_id
+    #     else: 
+    #         artist_id = None
 
     #get timeperiod 
     timeperiod = sf_datum.get('created_at', '')
 
     #get medium id 
     medium = sf_datum.get('medium', '')
-    #maybe there is an id associated with None
 
+    #maybe there is an id associated with None
     if medium: 
         medium_query = Medium.query.filter(Medium.medium_desc == medium)
         medium_object = medium_query.first() 
