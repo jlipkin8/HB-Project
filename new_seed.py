@@ -6,6 +6,7 @@ from sqlalchemy import func
 from model import *
 import ast
 import re
+import json
 
 ################################################################################
 """Get art data from SF data """
@@ -18,6 +19,7 @@ response = requests.get(url)
 if response.status_code == 200: 
     #returns a list of objects 
     sf_data = response.json()
+
 
 ################################################################################
 # DATA_LEN = len(sf_data)
@@ -83,25 +85,30 @@ def load_artist(sf_datum):
         name1, name2 = re.split(" and ", name)
         chck_nm_create_artist(name1)
         chck_nm_create_artist(name2)
+        return [name1, name2]
     elif re.match(pattern2, name):
         # Cervantes, Morales and Poethig
         names = name.replace(" and ", ", ")
         names = names.split(", ")
         chck_mult_nms_create_artists(names)
+        return names
     elif re.match(pattern3, name):
         # Collins, Goto, Reiko 
         names = name.split(", ")
         chck_mult_nms_create_artists(names)
+        return names
     elif re.match(pattern4, name):
         # Chesse, Ralph A.
         m = re.match(pattern4, name)  
         name = m.group(0)
         chck_nm_create_artist(name)
+        return [name]
     elif re.match(pattern5, name):
         # Cheng, Carl
         m = re.match(pattern5, name)
         name = m.group(0)
         chck_nm_create_artist(name)
+        return [name]
     elif re.match(pattern6, name):
         # Cheng/Smith, Carl/Jon
         names = name.replace("/",", ")
@@ -111,23 +118,13 @@ def load_artist(sf_datum):
         name2 = names_dict["l_name_two"] + ", " + names_dict["fname_two"]
         chck_nm_create_artist(name1)
         chck_nm_create_artist(name2)
+        return [name1, name2]
         
     db.session.commit()
-    print "\n\n"
     
 
 def load_artpiece(sf_datum):
     """Load artpiece from sf_data into database."""
-
-    #probably don't need the artist name/id in this one 
-    #get artist id 
-    # artist_name = sf_datum.get('artist', '')
-    # if artist_name:  
-    #     artist = Artist.query.filter(Artist.name == artist_name).first()
-    #     if artist: 
-    #         artist_id = artist.artist_id
-    #     else: 
-    #         artist_id = None
 
     #get timeperiod 
     timeperiod = sf_datum.get('created_at', '')
@@ -145,11 +142,10 @@ def load_artpiece(sf_datum):
         mediumid = None
 
     #get dimensions
-    # dimensions = sf_datum['geometry']['coordinates']
-    # print "\n"
-    dimensions = sf_datum['geometry']
-    geo_dict = ast.literal_eval(dimensions)
+    dimensions = sf_datum.get('geometry')
+    geo_dict = json.loads(dimensions)
     coordinates = geo_dict['coordinates']
+
 
     #get location desc
     loc_desc = sf_datum.get('location_description', '')
@@ -167,8 +163,7 @@ def load_artpiece(sf_datum):
         creditline_id = None
 
     # create artpiece instance 
-    artpiece = Artpiece(artist_id=artist_id,
-                        timeperiod=timeperiod, 
+    artpiece = Artpiece(timeperiod=timeperiod, 
                         medium_id=mediumid, 
                         dimensions=coordinates, 
                         loc_desc=loc_desc, 
@@ -181,7 +176,9 @@ def load_artpiece(sf_datum):
     # Get the Max user_id in the database
     result = db.session.query(func.max(Artpiece.art_id)).one()
     max_id = int(result[0])
-    load_artist_artpiece(artist_id, max_id)
+    print "-------------> id: ", max_id
+    return max_id
+    # load_artist_artpiece(artist_id, max_id)
 
 
 def load_creditline(sf_datum):
@@ -196,11 +193,17 @@ def load_creditline(sf_datum):
     db.session.commit()
 
 
-def load_artist_artpiece(artist_id, art_id): 
+def load_artist_artpiece(artist_names, art_id): 
     """Load artist and artpiece from sf_data into database"""
 
-    artistartpiece = ArtistArtpiece(artist_id=artist_id, art_id=art_id)
-    db.session.add(artistartpiece)
+    #get artist's name/names
+    for name in artist_names: 
+        artist = Artist.query.filter(Artist.name == name).first()
+        artist_id = artist.artist_id
+        already_exists = ArtistArtpiece.query.filter(ArtistArtpiece.artist_id == artist_id, ArtistArtpiece.art_id == art_id).first()
+        if not already_exists:
+             artistartpiece = ArtistArtpiece(artist_id=artist_id, art_id=art_id)
+             db.session.add(artistartpiece)
 
     db.session.commit()
 
@@ -225,14 +228,15 @@ if __name__ == "__main__":
     db.create_all()
 
     # seeding tables with example data 
-    example_data = sf_data[:20]
+    example_data = sf_data[5:8]
     EX_LEN = len(example_data)
     SF_LEN = len(sf_data)
-
     for i in range(EX_LEN): 
-        load_artist(example_data[i])
-        # load_creditline(example_data[i])
-        # load_medium(example_data[i])
-        # load_artpiece(example_data[i])
-
+        if example_data[i].get(u'_id_') == u"_id" and example_data[i].get("geometry") == u"geometry":
+            continue
+        artist_names = load_artist(example_data[i])
+        load_creditline(example_data[i])
+        load_medium(example_data[i])
+        artpiece_id = load_artpiece(example_data[i])
+        load_artist_artpiece(artist_names, artpiece_id)
 
