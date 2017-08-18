@@ -162,14 +162,19 @@ def load_artpiece(sf_datum):
         creditline_id = None
 
     # create artpiece instance 
-    artpiece = Artpiece(timeperiod=timeperiod, 
-                        medium_id=mediumid, 
-                        dimensions=coordinates, 
-                        loc_desc=loc_desc, 
-                        title=title, 
-                        creditline_id=creditline_id)
-    db.session.add(artpiece)
-    db.session.commit()
+    # check if there is and artpiece there 
+    exists = Artpiece.query.filter(Artpiece.dimensions == coordinates, 
+                                   Artpiece.title == title).first()
+
+    if not exists: 
+        artpiece = Artpiece(timeperiod=timeperiod, 
+                            medium_id=mediumid, 
+                            dimensions=coordinates, 
+                            loc_desc=loc_desc, 
+                            title=title, 
+                            creditline_id=creditline_id)
+        db.session.add(artpiece)
+        db.session.commit()
 
 
     # Get the Max user_id in the database
