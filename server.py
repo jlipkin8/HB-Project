@@ -1,4 +1,5 @@
 from flask import Flask, render_template, jsonify
+from model import *
 
 app = Flask(__name__)
 
@@ -9,13 +10,17 @@ def homepage():
     return render_template("home_map.html")
 
 
-@app.route("/art-pieces")
-def artpiece_info():
-    """JSON info about artpieces"""
-    return jsonify({'markers':[{"name": "Mural", "lat": 37.7478586, "lng": -122.4556651}, 
-                   {"name": "Sculpture", "lat": 37.7419071, "lng": -122.4650348}, 
-                   {"name": "Drawing", "lat": 37.8085303, "lng": -122.4120591}]})
+@app.route("/coordinates")
+def grab_coordinates():
+    coordinates = []
+    rows = db.session.query(Artpiece.dimensions).all()
+    for row in rows: 
+        lng = float(row[0][0])
+        lat = float(row[0][1])
+        coordinates.append((lat,lng))
+    return jsonify(coordinates)
     
 
-if __name__ == "__main__": 
+if __name__ == "__main__":
+    connect_to_db(app)
     app.run(host="0.0.0.0")

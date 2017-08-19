@@ -28,7 +28,7 @@ def create_artist(does_exist, name):
     """Create artist object and add to session""" 
 
     if not does_exist: 
-        print "I'm in create_artist"
+        # print "I'm in create_artist"
         artist = Artist(name=name)
         db.session.add(artist)
         db.session.commit()
@@ -66,42 +66,42 @@ def load_artist(sf_datum):
 
     if re.match(pattern1, name): 
         # Chamberlain, Ann and Lubell, Bernie
-        print "pattern1"
+        # print "pattern1"
         name1, name2 = re.split(" and ", name)
         chck_nm_create_artist(name1)
         chck_nm_create_artist(name2)
         return [name1, name2]
     elif re.match(pattern2, name):
         # Cervantes, Morales and Poethig
-        print "pattern2"
+        # print "pattern2"
         names = name.replace(" and ", ", ")
         names = names.split(", ")
         print names 
         chck_mult_nms_create_artists(names)
         return names
     elif re.match(pattern3, name):
-        print "pattern3"
+        # print "pattern3"
         # Collins, Goto, Reiko 
         names = name.split(", ")
         chck_mult_nms_create_artists(names)
         return names
     elif re.match(pattern4, name):
         # Chesse, Ralph A.
-        print "pattern4"
+        # print "pattern4"
         m = re.match(pattern4, name)  
         name = m.group(0)
         chck_nm_create_artist(name)
         return [name]
     elif re.match(pattern5, name):
         # Cheng, Carl
-        print "pattern5"
+        # print "pattern5"
         m = re.match(pattern5, name)
         name = m.group(0)
         chck_nm_create_artist(name)
         return [name]
     elif re.match(pattern6, name):
         # Cheng/Smith, Carl/Jon
-        print "pattern6"
+        # print "pattern6"
         names = name.replace("/",",")
         names = names.replace(" ", "")
         print names
@@ -114,7 +114,7 @@ def load_artist(sf_datum):
         chck_nm_create_artist(name2)
         return [name1, name2]
     else:
-        print "else pattern"
+        # print "else pattern"
         chck_nm_create_artist(name)
         return [name]
 
@@ -201,7 +201,6 @@ def load_artist_artpiece(artist_names, art_id):
     #get artist's name/names
     # print "---------> ", type(artist_names)
     for name in artist_names: 
-        print "-------------------> ", name
         artist = Artist.query.filter(Artist.name == name).first()
         artist_id = artist.artist_id
         already_exists = ArtistArtpiece.query.filter(ArtistArtpiece.artist_id == artist_id,
@@ -251,7 +250,7 @@ if __name__ == "__main__":
 
     for i in range(SF_LEN): 
         # pp.pprint(example_data[i])d
-        print "$$$$$$$$", count
+        # print "$$$$$$$$", count
         count = count + 1 
         if sf_data[i].get(u'_id_') == u"_id" and sf_data[i].get("geometry") == u"geometry":
             continue

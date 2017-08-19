@@ -36,17 +36,29 @@
         });
 
         // retrieves artpiece info wiht AJAX
-          $.get("/art-pieces", function(artpieces){
-            markers = artpieces["markers"];
-            for(var marker in markers){
-              artpiece = markers[marker]
+          $.get("/coordinates", function(coordinates){
+            console.log(typeof coordinates); 
+            for(var i in coordinates){
+              coord = coordinates[i]
+              console.log(coord)
               marker = new google.maps.Marker({
-                position: new google.maps.LatLng(artpiece.lat, artpiece.lng),
+                position: new google.maps.LatLng(coord[0], coord[1]),
                 map: map,
-                title: artpiece.name
+                title: "art"
               });
             }
-          });
+          }); 
+
+            // markers = artpieces["markers"];
+            // for(var marker in markers){
+            //   artpiece = markers[marker]
+            //   marker = new google.maps.Marker({
+            //     position: new google.maps.LatLng(artpiece.lat, artpiece.lng),
+            //     map: map,
+            //     title: artpiece.name
+            //   });
+            // }
+    
 
       }
     </script>
