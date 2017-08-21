@@ -14,18 +14,27 @@
         form {
             margin: 20px; 
         }
+        .ui-widget {
+          margin: 20px; 
+        }
     </style>
 </head>
 
 <body>
     <h1>SF Civic Art</h1>
     <div id="art-map"></div>
-    <form action="#">
+    <form action="#" hidden>
         <label for="artist">Seach by Artist Name:</label>
         <input type="text" name="artistname" id="artist">
         <input type="submit" value="Submit">
     </form>
+    <div class="ui-widget">
+      <label for="tags">Seach by Artist Name: </label>
+      <input id="tags" method="post">
+      <input type="submit" id="submit-name" value="Submit">
+    </div>
     <script src="https://code.jquery.com/jquery.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script>
       var map;
       function initMap() {
@@ -37,33 +46,48 @@
 
         // retrieves artpiece info wiht AJAX
           $.get("/coordinates", function(coordinates){
-            console.log(typeof coordinates); 
             for(var i in coordinates){
               coord = coordinates[i]
-              console.log(coord)
               marker = new google.maps.Marker({
                 position: new google.maps.LatLng(coord[0], coord[1]),
                 map: map,
                 title: "art"
               });
             }
+          });//end of $.get 
+
+      } //end of initMap
+
+       $( function() {
+          var artists_names = []
+          $.get("/artistnames", function(names){
+            artists_names = names.slice()
+            $( "#tags" ).autocomplete({
+              source: artists_names
+            });
           }); 
+        } );
 
-            // markers = artpieces["markers"];
-            // for(var marker in markers){
-            //   artpiece = markers[marker]
-            //   marker = new google.maps.Marker({
-            //     position: new google.maps.LatLng(artpiece.lat, artpiece.lng),
+       $("#submit-name").on("click", function(evt){
+          evt.preventDefault()
+          // setMapOnAll(null);
+          var artistname = $("#tags").val()
+          $.post("/pieces-by-artist",{ "artist": artistname}, function(data){
+            console.log(data)
+            console.log(data.coords)
+            // marker = new google.maps.Marker({
+            //     position: new google.maps.LatLng(data, coord[1]),
             //     map: map,
-            //     title: artpiece.name
-            //   });
-            // }
-    
+            //     title: "art"
+            // }); 
+          })
+       })
 
-      }
+      // https://jqueryui.com/autocomplete/
     </script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBtKiwRX-zLzkYEixhVxUlRPxdj0AKxRCM&callback=initMap"
-  type="text/javascript">
+    type="text/javascript">
     </script>
+</div>
 </body>
 </html>

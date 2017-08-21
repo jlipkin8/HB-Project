@@ -99,7 +99,7 @@ class ArtistArtpiece(db.Model):
     artist = db.relationship("Artist", 
                              backref=db.backref("artistartpieces"))
     # Define relationship to Artpiece 
-    artipiece = db.relationship("Artpiece", 
+    artpiece = db.relationship("Artpiece", 
                                 backref=db.backref("artistartpieces"))
 
     def __repr__(self): 
