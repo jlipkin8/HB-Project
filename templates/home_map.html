@@ -53,6 +53,303 @@
           zoom: 13
           
         });
+
+        // styling 
+         var styles = [
+          {
+            "elementType": "geometry",
+            "stylers": [
+              {
+                "color": "#ebe3cd"
+              }
+            ]
+          },
+          {
+            "elementType": "labels.text.fill",
+            "stylers": [
+              {
+                "color": "#523735"
+              }
+            ]
+          },
+          {
+            "elementType": "labels.text.stroke",
+            "stylers": [
+              {
+                "color": "#f5f1e6"
+              }
+            ]
+          },
+          {
+            "featureType": "administrative",
+            "elementType": "geometry.stroke",
+            "stylers": [
+              {
+                "color": "#c9b2a6"
+              }
+            ]
+          },
+          {
+            "featureType": "administrative.land_parcel",
+            "stylers": [
+              {
+                "visibility": "off"
+              }
+            ]
+          },
+          {
+            "featureType": "administrative.land_parcel",
+            "elementType": "geometry.stroke",
+            "stylers": [
+              {
+                "color": "#dcd2be"
+              }
+            ]
+          },
+          {
+            "featureType": "administrative.land_parcel",
+            "elementType": "labels.text.fill",
+            "stylers": [
+              {
+                "color": "#ae9e90"
+              }
+            ]
+          },
+          {
+            "featureType": "administrative.neighborhood",
+            "stylers": [
+              {
+                "visibility": "off"
+              }
+            ]
+          },
+          {
+            "featureType": "landscape.natural",
+            "elementType": "geometry",
+            "stylers": [
+              {
+                "color": "#dfd2ae"
+              }
+            ]
+          },
+          {
+            "featureType": "poi",
+            "elementType": "geometry",
+            "stylers": [
+              {
+                "color": "#dfd2ae"
+              }
+            ]
+          },
+          {
+            "featureType": "poi",
+            "elementType": "labels.text",
+            "stylers": [
+              {
+                "visibility": "off"
+              }
+            ]
+          },
+          {
+            "featureType": "poi",
+            "elementType": "labels.text.fill",
+            "stylers": [
+              {
+                "color": "#93817c"
+              }
+            ]
+          },
+          {
+            "featureType": "poi.park",
+            "elementType": "geometry.fill",
+            "stylers": [
+              {
+                "color": "#a5b076"
+              }
+            ]
+          },
+          {
+            "featureType": "poi.park",
+            "elementType": "labels.text.fill",
+            "stylers": [
+              {
+                "color": "#447530"
+              }
+            ]
+          },
+          {
+            "featureType": "road",
+            "elementType": "geometry",
+            "stylers": [
+              {
+                "color": "#f5f1e6"
+              }
+            ]
+          },
+          {
+            "featureType": "road",
+            "elementType": "labels",
+            "stylers": [
+              {
+                "visibility": "off"
+              }
+            ]
+          },
+          {
+            "featureType": "road.arterial",
+            "stylers": [
+              {
+                "visibility": "off"
+              }
+            ]
+          },
+          {
+            "featureType": "road.arterial",
+            "elementType": "geometry",
+            "stylers": [
+              {
+                "color": "#fdfcf8"
+              }
+            ]
+          },
+          {
+            "featureType": "road.highway",
+            "elementType": "geometry",
+            "stylers": [
+              {
+                "color": "#f8c967"
+              }
+            ]
+          },
+          {
+            "featureType": "road.highway",
+            "elementType": "geometry.stroke",
+            "stylers": [
+              {
+                "color": "#e9bc62"
+              }
+            ]
+          },
+          {
+            "featureType": "road.highway",
+            "elementType": "labels",
+            "stylers": [
+              {
+                "visibility": "off"
+              }
+            ]
+          },
+          {
+            "featureType": "road.highway.controlled_access",
+            "elementType": "geometry",
+            "stylers": [
+              {
+                "color": "#e98d58"
+              }
+            ]
+          },
+          {
+            "featureType": "road.highway.controlled_access",
+            "elementType": "geometry.stroke",
+            "stylers": [
+              {
+                "color": "#db8555"
+              }
+            ]
+          },
+          {
+            "featureType": "road.local",
+            "stylers": [
+              {
+                "visibility": "off"
+              }
+            ]
+          },
+          {
+            "featureType": "road.local",
+            "elementType": "labels.text.fill",
+            "stylers": [
+              {
+                "color": "#806b63"
+              }
+            ]
+          },
+          {
+            "featureType": "transit.line",
+            "elementType": "geometry",
+            "stylers": [
+              {
+                "color": "#dfd2ae"
+              }
+            ]
+          },
+          {
+            "featureType": "transit.line",
+            "elementType": "labels.text.fill",
+            "stylers": [
+              {
+                "color": "#8f7d77"
+              }
+            ]
+          },
+          {
+            "featureType": "transit.line",
+            "elementType": "labels.text.stroke",
+            "stylers": [
+              {
+                "color": "#ebe3cd"
+              }
+            ]
+          },
+          {
+            "featureType": "transit.station",
+            "elementType": "geometry",
+            "stylers": [
+              {
+                "color": "#dfd2ae"
+              }
+            ]
+          },
+          {
+            "featureType": "water",
+            "elementType": "geometry.fill",
+            "stylers": [
+              {
+                "color": "#b9d3c2"
+              }
+            ]
+          },
+          {
+            "featureType": "water",
+            "elementType": "labels.text",
+            "stylers": [
+              {
+                "visibility": "off"
+              }
+            ]
+          },
+          {
+            "featureType": "water",
+            "elementType": "labels.text.fill",
+            "stylers": [
+              {
+                "color": "#92998d"
+              }
+            ]
+          }
+]
+
+        var styledMapOptions = {
+            name: 'Custom Style'
+        };
+
+        var customMapType = new google.maps.StyledMapType(
+          styles,
+          styledMapOptions);
+
+        map.mapTypes.set('map_style', customMapType);
+        map.setMapTypeId('map_style');
+
         
         // info windows 
         var contentString = '<div><h1>Cool Stuff</h1></div>'; 
@@ -76,12 +373,6 @@
               markers.push(marker); 
             }
         });//end of $.get 
-
-
-       
-        if(markers[0]){
-         
-        }
       } //end of initMap
 
        $( function() {
@@ -100,7 +391,7 @@
           markers = []; 
           var artistname = $("#tags").val()
           console.log(artistname)
-          $.post("/pieces-by-artist",{ "artist": artistname}, function(data){
+          $.get("/pieces-by-artist.json",{ "artist": artistname}, function(data){
             artpieces = data["results"]
             for(var i in artpieces){
               ap = artpieces[i];
@@ -112,11 +403,15 @@
               let title = ap["title"]
               let timeperiod = ap["timeperiod"]
               let med_desc = ap["med_desc"]
+              let credit_line = ap["credit_line"]
+              let loc_desc = ap["loc_desc"]
               console.log(title); 
               let contentString = '<div>'+ 
               '<h2>' + title + '</h2>'+
               '<h4>' + timeperiod + '</h4>' +
-              '<p>' + med_desc + '</p>'
+              '<h4>' + credit_line + '</h4>' +
+              '<p>' + med_desc + '</p>' +
+              '<p>' + loc_desc + '</p>' +
               '</div>'; 
               let infowindow = new google.maps.InfoWindow({
                 content: contentString

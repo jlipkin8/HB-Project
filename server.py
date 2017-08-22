@@ -29,27 +29,32 @@ def return_artistnames():
 
     return jsonify(names)
 
-@app.route("/pieces-by-artist", methods=['POST'])
+@app.route("/pieces-by-artist.json")
 def return_artpieces_by_artist():
-    artistname = request.form.get("artist")
+    artistname = request.get("artist")
     print artistname
     artist = Artist.query.filter(Artist.name == artistname).first()
-    artist_id = artist.artist_id 
-    artpieces = ArtistArtpiece.query.filter(ArtistArtpiece.artist_id == artist_id).all()
+    artpieces = artist.artpieces
     art = []
     for ap in artpieces:
         info = {}
-        print ap.artpiece.title
-        info["title"] = ap.artpiece.title 
-        lat = float(ap.artpiece.dimensions[0])
-        lng = float(ap.artpiece.dimensions[1])
+        print ap.title
+        info["title"] = ap.title 
+
+        lat = float(ap.dimensions[0])
+        lng = float(ap.dimensions[1])
         info["coords"] = [lat,lng]
-        info["timeperiod"] =  ap.artpiece.timeperiod
-        info["med_desc"] = ap.artpiece.medium.medium_desc
+        info["timeperiod"] =  ap.timeperiod
+        info["med_desc"] = ap.medium.medium_desc
+        creditline = ap.creditline
+        # import pdb; pdb.set_trace()
+        if creditline: 
+            info["creditline"] = creditline.creditline_name
+        info["loc_desc"] = ap.loc_desc
         art.append(info)
 
     return jsonify({"results": art})
 
 if __name__ == "__main__":
     connect_to_db(app)
-    app.run(host="0.0.0.0")
+    app.run(debug=True, host="0.0.0.0")

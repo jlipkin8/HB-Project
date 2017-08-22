@@ -18,6 +18,10 @@ class Artist(db.Model):
                           primary_key=True)
     # name = db.Column(db.String(100), nullable=True, unique=True)
     name = db.Column(db.String(100), nullable=True)
+
+    artpieces = db.relationship("Artpiece", 
+                                secondary="artistartpieces",
+                                backref="artists")
     
     def __repr__(self): 
         """Provide representation of Artist when printed. """
@@ -96,11 +100,11 @@ class ArtistArtpiece(db.Model):
                        db.ForeignKey('artpieces.art_id'))
 
     # Define relationship to Artist 
-    artist = db.relationship("Artist", 
-                             backref=db.backref("artistartpieces"))
-    # Define relationship to Artpiece 
-    artpiece = db.relationship("Artpiece", 
-                                backref=db.backref("artistartpieces"))
+    # artist = db.relationship("Artist", 
+    #                          backref=db.backref("artistartpieces"))
+    # # Define relationship to Artpiece 
+    # artpiece = db.relationship("Artpiece", 
+    #                             backref=db.backref("artistartpieces"))
 
     def __repr__(self): 
         """Provide representation of one an artist's artipiece""" 
