@@ -53,89 +53,15 @@
           zoom: 13
           
         });
-
-        map.setOptions({styles:[{elementType: 'geometry', stylers: [{color: '#242f3e'}]},
-          {elementType: 'labels.text.stroke', stylers: [{color: '#242f3e'}]},
-          {elementType: 'labels.text.fill', stylers: [{color: '#746855'}]},
-        {
-          featureType: 'administrative.locality',
-          elementType: 'labels.text.fill',
-          stylers: [{color: '#d59563'}]
-        },
-        {
-          featureType: 'poi',
-          elementType: 'labels.text.fill',
-          stylers: [{color: '#d59563'}]
-        },
-        {
-          featureType: 'poi.park',
-          elementType: 'geometry',
-          stylers: [{color: '#263c3f'}]
-        },
-        {
-          featureType: 'poi.park',
-          elementType: 'labels.text.fill',
-          stylers: [{color: '#6b9a76'}]
-        },
-        {
-          featureType: 'road',
-          elementType: 'geometry',
-          stylers: [{color: '#38414e'}]
-        },
-        {
-          featureType: 'road',
-          elementType: 'geometry.stroke',
-          stylers: [{color: '#212a37'}]
-        },
-        {
-          featureType: 'road',
-          elementType: 'labels.text.fill',
-          stylers: [{color: '#9ca5b3'}]
-        },
-        {
-          featureType: 'road.highway',
-          elementType: 'geometry',
-          stylers: [{color: '#746855'}]
-        },
-        {
-          featureType: 'road.highway',
-          elementType: 'geometry.stroke',
-          stylers: [{color: '#1f2835'}]
-        },
-        {
-          featureType: 'road.highway',
-          elementType: 'labels.text.fill',
-          stylers: [{color: '#f3d19c'}]
-        },
-        {
-          featureType: 'transit',
-          elementType: 'geometry',
-          stylers: [{color: '#2f3948'}]
-        },
-        {
-          featureType: 'transit.station',
-          elementType: 'labels.text.fill',
-          stylers: [{color: '#d59563'}]
-        },
-        {
-          featureType: 'water',
-          elementType: 'geometry',
-          stylers: [{color: '#17263c'}]
-        },
-        {
-          featureType: 'water',
-          elementType: 'labels.text.fill',
-          stylers: [{color: '#515c6d'}]
-        },
-        {
-          featureType: 'water',
-          elementType: 'labels.text.stroke',
-          stylers: [{color: '#17263c'}]
-        }]});
-
         
+        // info windows 
+        var contentString = '<div><h1>Cool Stuff</h1></div>'; 
+        var infowindow = new google.maps.InfoWindow({
+          content: contentString
+        });
 
-        // retrieves artpiece info wiht AJAX
+
+        // retrieves artpiece info with AJAX
         $.get("/coordinates", function(coordinates){
             for(var i in coordinates){
               coord = coordinates[i]
@@ -144,10 +70,18 @@
                 map: map,
                 title: "art"
               });
+              marker.addListener('click', function(){
+                infowindow.open(map, this); 
+              });
               markers.push(marker); 
             }
         });//end of $.get 
 
+
+       
+        if(markers[0]){
+         
+        }
       } //end of initMap
 
        $( function() {
@@ -161,7 +95,7 @@
         } );
 
        $("#submit-name").on("click", function(evt){
-          evt.preventDefault()
+          evt.preventDefault();
           setMapOnAll(null);
           markers = []; 
           var artistname = $("#tags").val()
@@ -173,12 +107,23 @@
                 position: new google.maps.LatLng(ap["coords"][1], ap["coords"][0]),
                 map: map,
                 title: ap["title"]
-              });
+              }); //end of making a marker
+              var title = ap["title"]
+              var contentString = '<div>'+ 
+              '<h2>' + title + '</h2>'+
+              '</div>'; 
+              var infowindow = new google.maps.InfoWindow({
+                content: contentString
+              }); // end of making an infowindoq
+              marker.addListener('click', function(){
+                console.log("clicky"); 
+                infowindow.open(map, this); 
+              }); //end of adding an event listener on a marker
               markers.push(marker); 
             }  
           }) //end of post request 
        })
-
+      
       // https://jqueryui.com/autocomplete/
     </script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBtKiwRX-zLzkYEixhVxUlRPxdj0AKxRCM&callback=initMap"
