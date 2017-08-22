@@ -37,6 +37,16 @@
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script>
       var map;
+
+      var markers = []; 
+      // Sets the map on all markers in the array.
+      //https://developers.google.com/maps/documentation/javascript/examples/marker-remove
+      function setMapOnAll(map) {
+        for (var i = 0; i < markers.length; i++) {
+          markers[i].setMap(map);
+        }
+      }
+
       function initMap() {
         map = new google.maps.Map(document.getElementById('art-map'), {
           center: {lat: 37.7748, lng: -122.435},
@@ -44,8 +54,89 @@
           
         });
 
+        map.setOptions({styles:[{elementType: 'geometry', stylers: [{color: '#242f3e'}]},
+          {elementType: 'labels.text.stroke', stylers: [{color: '#242f3e'}]},
+          {elementType: 'labels.text.fill', stylers: [{color: '#746855'}]},
+        {
+          featureType: 'administrative.locality',
+          elementType: 'labels.text.fill',
+          stylers: [{color: '#d59563'}]
+        },
+        {
+          featureType: 'poi',
+          elementType: 'labels.text.fill',
+          stylers: [{color: '#d59563'}]
+        },
+        {
+          featureType: 'poi.park',
+          elementType: 'geometry',
+          stylers: [{color: '#263c3f'}]
+        },
+        {
+          featureType: 'poi.park',
+          elementType: 'labels.text.fill',
+          stylers: [{color: '#6b9a76'}]
+        },
+        {
+          featureType: 'road',
+          elementType: 'geometry',
+          stylers: [{color: '#38414e'}]
+        },
+        {
+          featureType: 'road',
+          elementType: 'geometry.stroke',
+          stylers: [{color: '#212a37'}]
+        },
+        {
+          featureType: 'road',
+          elementType: 'labels.text.fill',
+          stylers: [{color: '#9ca5b3'}]
+        },
+        {
+          featureType: 'road.highway',
+          elementType: 'geometry',
+          stylers: [{color: '#746855'}]
+        },
+        {
+          featureType: 'road.highway',
+          elementType: 'geometry.stroke',
+          stylers: [{color: '#1f2835'}]
+        },
+        {
+          featureType: 'road.highway',
+          elementType: 'labels.text.fill',
+          stylers: [{color: '#f3d19c'}]
+        },
+        {
+          featureType: 'transit',
+          elementType: 'geometry',
+          stylers: [{color: '#2f3948'}]
+        },
+        {
+          featureType: 'transit.station',
+          elementType: 'labels.text.fill',
+          stylers: [{color: '#d59563'}]
+        },
+        {
+          featureType: 'water',
+          elementType: 'geometry',
+          stylers: [{color: '#17263c'}]
+        },
+        {
+          featureType: 'water',
+          elementType: 'labels.text.fill',
+          stylers: [{color: '#515c6d'}]
+        },
+        {
+          featureType: 'water',
+          elementType: 'labels.text.stroke',
+          stylers: [{color: '#17263c'}]
+        }]});
+
+        
+
         // retrieves artpiece info wiht AJAX
-          $.get("/coordinates", function(coordinates){
+        $.get("/coordinates", function(coordinates){
             for(var i in coordinates){
               coord = coordinates[i]
               marker = new google.maps.Marker({
@@ -53,8 +144,9 @@
                 map: map,
                 title: "art"
               });
+              markers.push(marker); 
             }
-          });//end of $.get 
+        });//end of $.get 
 
       } //end of initMap
 
@@ -70,17 +162,21 @@
 
        $("#submit-name").on("click", function(evt){
           evt.preventDefault()
-          // setMapOnAll(null);
+          setMapOnAll(null);
+          markers = []; 
           var artistname = $("#tags").val()
           $.post("/pieces-by-artist",{ "artist": artistname}, function(data){
-            console.log(data)
-            console.log(data.coords)
-            // marker = new google.maps.Marker({
-            //     position: new google.maps.LatLng(data, coord[1]),
-            //     map: map,
-            //     title: "art"
-            // }); 
-          })
+            artpieces = data["results"]
+            for(var i in artpieces){
+              ap = artpieces[i];
+              marker = new google.maps.Marker({
+                position: new google.maps.LatLng(ap["coords"][1], ap["coords"][0]),
+                map: map,
+                title: ap["title"]
+              });
+              markers.push(marker); 
+            }  
+          }) //end of post request 
        })
 
       // https://jqueryui.com/autocomplete/

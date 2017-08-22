@@ -45,7 +45,7 @@ def return_artpieces_by_artist():
         info["coords"] = [lat,lng]
         art.append(info)
 
-    return {"results": art}
+    return jsonify({"results": art})
 
 if __name__ == "__main__":
     connect_to_db(app)
