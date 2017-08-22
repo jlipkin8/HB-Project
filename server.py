@@ -39,10 +39,13 @@ def return_artpieces_by_artist():
     art = []
     for ap in artpieces:
         info = {}
+        print ap.artpiece.title
         info["title"] = ap.artpiece.title 
         lat = float(ap.artpiece.dimensions[0])
         lng = float(ap.artpiece.dimensions[1])
         info["coords"] = [lat,lng]
+        info["timeperiod"] =  ap.artpiece.timeperiod
+        info["med_desc"] = ap.artpiece.medium.medium_desc
         art.append(info)
 
     return jsonify({"results": art})

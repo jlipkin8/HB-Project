@@ -99,6 +99,7 @@
           setMapOnAll(null);
           markers = []; 
           var artistname = $("#tags").val()
+          console.log(artistname)
           $.post("/pieces-by-artist",{ "artist": artistname}, function(data){
             artpieces = data["results"]
             for(var i in artpieces){
@@ -108,11 +109,16 @@
                 map: map,
                 title: ap["title"]
               }); //end of making a marker
-              var title = ap["title"]
-              var contentString = '<div>'+ 
+              let title = ap["title"]
+              let timeperiod = ap["timeperiod"]
+              let med_desc = ap["med_desc"]
+              console.log(title); 
+              let contentString = '<div>'+ 
               '<h2>' + title + '</h2>'+
+              '<h4>' + timeperiod + '</h4>' +
+              '<p>' + med_desc + '</p>'
               '</div>'; 
-              var infowindow = new google.maps.InfoWindow({
+              let infowindow = new google.maps.InfoWindow({
                 content: contentString
               }); // end of making an infowindoq
               marker.addListener('click', function(){
