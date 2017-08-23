@@ -43,7 +43,7 @@ class Artpiece(db.Model):
   
     medium_id = db.Column(db.Integer, 
                           db.ForeignKey('media.medium_id'))
-    dimensions = db.Column(db.ARRAY(db.Numeric, dimensions=1))
+    coords = db.Column(db.ARRAY(db.Numeric, dimensions=1))
 
     loc_desc = db.Column(db.String(300))
   

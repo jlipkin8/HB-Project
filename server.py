@@ -26,8 +26,8 @@ def return_pieces():
         info["artist"] = names
         info["title"] = ap.title 
 
-        lat = float(ap.dimensions[0])
-        lng = float(ap.dimensions[1])
+        lat = float(ap.coords[0])
+        lng = float(ap.coords[1])
         info["coords"] = [lat,lng]
         info["timeperiod"] =  ap.timeperiod
         medium = ap.medium
@@ -64,8 +64,8 @@ def return_artpieces_by_artist():
         print ap.title
         info["title"] = ap.title 
 
-        lat = float(ap.dimensions[0])
-        lng = float(ap.dimensions[1])
+        lat = float(ap.coords[0])
+        lng = float(ap.coords[1])
         info["coords"] = [lat,lng]
         info["timeperiod"] =  ap.timeperiod
         info["med_desc"] = ap.medium.medium_desc
