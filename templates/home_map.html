@@ -369,8 +369,7 @@
             let credit_line = piece["creditline"]; 
             let loc_desc = piece["loc_desc"];
             let artist = piece["artist"]; 
-            console.log(artist); 
-            // console.log(title); 
+      
             marker = new google.maps.Marker({
               position: new google.maps.LatLng(piece["coords"][1], piece["coords"][0]),
               map: map,
@@ -389,7 +388,6 @@
               artists += '</h3>'; 
             }
               
-
             let contentString = '<div>'+ 
             '<h2>' + title + '</h2>'+ artists +
             '<h4>' + timeperiod + '</h4>' +
@@ -397,6 +395,7 @@
             '<p>' + med_desc + '</p>' +
             '<p>' + loc_desc + '</p>' +
             '</div>'; 
+
             let infowindow = new google.maps.InfoWindow({
               content: contentString
             }); // end of making an infowindoq
@@ -421,6 +420,13 @@
        $("#submit-name").on("click", function(evt){
           evt.preventDefault();
           setMapOnAll(null);
+          var searchArtist = $("#tags").val(); 
+          for (var i = 0; i < markers.length; i++){
+            console.log(markers[i].artist); 
+            if((markers[i].artist.indexOf(searchArtist)) !== -1){
+              markers[i].setMap(map);
+            }
+          }
        }); 
       
       // https://jqueryui.com/autocomplete/
