@@ -10,15 +10,33 @@ def homepage():
     return render_template("home_map.html")
 
 
-@app.route("/coordinates")
-def grab_coordinates():
-    coordinates = []
-    rows = db.session.query(Artpiece.dimensions).all()
-    for row in rows: 
-        lng = float(row[0][0])
-        lat = float(row[0][1])
-        coordinates.append((lat,lng))
-    return jsonify(coordinates)
+@app.route("/pieces.json")
+def return_pieces():
+    print "-------------->HEYO"
+    artpieces = Artpiece.query.all()
+    art = []
+
+    for ap in artpieces:
+        info = {}
+        # print ap.title
+        info["title"] = ap.title 
+
+        lat = float(ap.dimensions[0])
+        lng = float(ap.dimensions[1])
+        info["coords"] = [lat,lng]
+        info["timeperiod"] =  ap.timeperiod
+        medium = ap.medium
+        if medium: 
+            info["med_desc"] = ap.medium.medium_desc
+        creditline = ap.creditline
+        # import pdb; pdb.set_trace()
+        if creditline:
+            print creditline.creditline_name
+            info["creditline"] = creditline.creditline_name
+        info["loc_desc"] = ap.loc_desc
+        art.append(info)
+
+    return jsonify({"results": art})
 
 @app.route("/artistnames")
 def return_artistnames(): 
@@ -31,7 +49,7 @@ def return_artistnames():
 
 @app.route("/pieces-by-artist.json")
 def return_artpieces_by_artist():
-    artistname = request.get("artist")
+    artistname = request.args.get("artist")
     print artistname
     artist = Artist.query.filter(Artist.name == artistname).first()
     artpieces = artist.artpieces
