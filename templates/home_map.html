@@ -363,19 +363,35 @@
           pieces = data["results"]
           for(var i in pieces){
             piece = pieces[i];
-            console.log(piece)
+            let title = piece["title"]; 
+            let timeperiod = piece["timeperiod"]; 
+            let med_desc = piece["med_desc"]; 
+            let credit_line = piece["creditline"]; 
+            let loc_desc = piece["loc_desc"];
+            let artist = piece["artist"]; 
+            console.log(artist); 
+            // console.log(title); 
             marker = new google.maps.Marker({
               position: new google.maps.LatLng(piece["coords"][1], piece["coords"][0]),
               map: map,
+              title: title,
+              timeperiod: timeperiod,
+              med_desc: med_desc, 
+              credit_line: credit_line, 
+              loc_desc: loc_desc, 
+              artist: artist
             });
-            let title = piece["title"]
-            let timeperiod = piece["timeperiod"]
-            let med_desc = piece["med_desc"]
-            let credit_line = piece["creditline"]
-            let loc_desc = piece["loc_desc"]
-            console.log(title); 
+            
+            var artists = ""; 
+            for(var name in marker.artist){
+              artists += '<h3>'; 
+              artists += marker.artist[name]; 
+              artists += '</h3>'; 
+            }
+              
+
             let contentString = '<div>'+ 
-            '<h2>' + title + '</h2>'+
+            '<h2>' + title + '</h2>'+ artists +
             '<h4>' + timeperiod + '</h4>' +
             '<h4>' + credit_line + '</h4>' +
             '<p>' + med_desc + '</p>' +
@@ -385,7 +401,6 @@
               content: contentString
             }); // end of making an infowindoq
             marker.addListener('click', function(){
-              console.log("clicky"); 
               infowindow.open(map, this); 
             }); //end of adding an event listener on a marker
             markers.push(marker); 

@@ -18,7 +18,12 @@ def return_pieces():
 
     for ap in artpieces:
         info = {}
-        # print ap.title
+        names = []
+        artists = ap.artists
+        for artist in artists: 
+            names.append(artist.name)
+
+        info["artist"] = names
         info["title"] = ap.title 
 
         lat = float(ap.dimensions[0])
