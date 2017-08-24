@@ -12,7 +12,6 @@ def homepage():
 
 @app.route("/pieces.json")
 def return_pieces():
-    print "-------------->HEYO"
     artpieces = Artpiece.query.all()
     art = []
 

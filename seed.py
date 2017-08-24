@@ -224,34 +224,30 @@ def load_medium(sf_datum):
     db.session.commit()
 
 
+def seed_example_data():
+    example_data = sf_data[:]
+    EX_LEN = len(example_data)
+    for i in range(EX_LEN): 
+        # pp.pprint(example_data[i])d
+        # print "$$$$$$$$", count
+        count = count + 1 
+        if example_data[i].get(u'_id_') == u"_id" and example_data[i].get("geometry") == u"geometry":
+            continue
+        artist_names = load_artist(example_data[i])
+        load_creditline(example_data[i])
+        load_medium(example_data[i])
+        artpiece_id = load_artpiece(example_data[i])
+        load_artist_artpiece(artist_names, artpiece_id)
+
 ################################################################################
 
 if __name__ == "__main__": 
     app = Flask(__name__)
     connect_to_db(app)
     db.create_all()
-    count = 0; 
-    # seeding tables with example data
-    # pp = pprint.PrettyPrinter(indent=4)
-    example_data = sf_data[405:410]
-    EX_LEN = len(example_data)
     SF_LEN = len(sf_data)
-    # for i in range(EX_LEN): 
-    #     # pp.pprint(example_data[i])
-    #     print "$$$$$$$$", count
-    #     count = count + 1 
-    #     if example_data[i].get(u'_id_') == u"_id" and example_data[i].get("geometry") == u"geometry":
-    #         continue
-    #     artist_names = load_artist(example_data[i])
-    #     load_creditline(example_data[i])
-    #     load_medium(example_data[i])
-    #     artpiece_id = load_artpiece(example_data[i])
-    #     load_artist_artpiece(artist_names, artpiece_id)
 
     for i in range(SF_LEN): 
-        # pp.pprint(example_data[i])d
-        # print "$$$$$$$$", count
-        count = count + 1 
         if sf_data[i].get(u'_id_') == u"_id" and sf_data[i].get("geometry") == u"geometry":
             continue
         artist_names = load_artist(sf_data[i])

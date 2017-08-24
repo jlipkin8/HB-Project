@@ -189,11 +189,11 @@ class User(db.Model):
 ################################################################################
 # Helper functions
 
-def connect_to_db(app):
+def connect_to_db(app, database='postgresql:///arts'):
     """Connect the database to our Flask app."""
 
     # Configure to use our PostgreSQL database
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///arts'
+    app.config['SQLALCHEMY_DATABASE_URI'] = database
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.app = app
     db.init_app(app)
