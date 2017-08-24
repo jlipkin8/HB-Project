@@ -12,13 +12,15 @@ def homepage():
 
 @app.route("/pieces.json")
 def return_pieces():
+    """JSON information about artpieces."""
+
     artpieces = Artpiece.query.all()
     art = []
-
+    # going through each row returned from the query 
     for ap in artpieces:
         info = {}
         names = []
-        artists = ap.artists
+        artists = ap.artists # 
         for artist in artists: 
             names.append(artist.name)
 
@@ -42,6 +44,7 @@ def return_pieces():
 
     return jsonify({"results": art})
 
+
 @app.route("/artistnames")
 def return_artistnames(): 
     names = []
@@ -51,31 +54,6 @@ def return_artistnames():
 
     return jsonify(names)
 
-@app.route("/pieces-by-artist.json")
-def return_artpieces_by_artist():
-    artistname = request.args.get("artist")
-    print artistname
-    artist = Artist.query.filter(Artist.name == artistname).first()
-    artpieces = artist.artpieces
-    art = []
-    for ap in artpieces:
-        info = {}
-        print ap.title
-        info["title"] = ap.title 
-
-        lat = float(ap.coords[0])
-        lng = float(ap.coords[1])
-        info["coords"] = [lat,lng]
-        info["timeperiod"] =  ap.timeperiod
-        info["med_desc"] = ap.medium.medium_desc
-        creditline = ap.creditline
-        # import pdb; pdb.set_trace()
-        if creditline: 
-            info["creditline"] = creditline.creditline_name
-        info["loc_desc"] = ap.loc_desc
-        art.append(info)
-
-    return jsonify({"results": art})
 
 if __name__ == "__main__":
     connect_to_db(app)

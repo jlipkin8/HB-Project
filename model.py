@@ -9,14 +9,14 @@ db = SQLAlchemy()
 #Model definitions 
 
 class Artist(db.Model):
-    """Artist who made an artpiece"""
+    """Artist. An artist has many artpieces"""
 
     __tablename__ = "artists"
 
     artist_id = db.Column(db.Integer,
                           autoincrement=True, 
                           primary_key=True)
-    # name = db.Column(db.String(100), nullable=True, unique=True)
+
     name = db.Column(db.String(100), nullable=True)
 
     artpieces = db.relationship("Artpiece", 
@@ -31,23 +31,19 @@ class Artist(db.Model):
 
 
 class Artpiece(db.Model):
-    """Artpiece made by an artist"""
+    """Artpiece. An artpiece has a medium, a creditline, and (many) artists."""
 
     __tablename__ = "artpieces"
 
     art_id = db.Column(db.Integer,
                           autoincrement=True, 
                           primary_key=True)
-    # artist_id = db.Column(db.Integer, 
-    #                       db.ForeignKey('artists.artist_id'))
-  
     medium_id = db.Column(db.Integer, 
                           db.ForeignKey('media.medium_id'))
     coords = db.Column(db.ARRAY(db.Numeric, dimensions=1))
 
     loc_desc = db.Column(db.String(300))
   
-    #why make it a separate table? You are not searching by date 
     timeperiod = db.Column(db.String(100))
 
     title = db.Column(db.String(100))
@@ -70,7 +66,7 @@ class Artpiece(db.Model):
 
 
 class Creditline(db.Model):
-    """Credit line of an artpiece.""" 
+    """Creditline. A creditline has many artpieces.""" 
 
     __tablename__ = "creditlines"
 
@@ -87,7 +83,7 @@ class Creditline(db.Model):
 
 
 class ArtistArtpiece(db.Model):
-    """Arist and an artpiece.""" 
+    """AristArtpiece.""" 
 
     __tablename__ = "artistartpieces"
 
@@ -98,13 +94,6 @@ class ArtistArtpiece(db.Model):
                           db.ForeignKey('artists.artist_id'))
     art_id = db.Column(db.Integer, 
                        db.ForeignKey('artpieces.art_id'))
-
-    # Define relationship to Artist 
-    # artist = db.relationship("Artist", 
-    #                          backref=db.backref("artistartpieces"))
-    # # Define relationship to Artpiece 
-    # artpiece = db.relationship("Artpiece", 
-    #                             backref=db.backref("artistartpieces"))
 
     def __repr__(self): 
         """Provide representation of one an artist's artipiece""" 
