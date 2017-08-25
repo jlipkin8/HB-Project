@@ -410,8 +410,7 @@
             marker.addListener('click', function(){
               infowindow.open(map, this); 
             }); //end of adding an event listener on a marker
-            markers.push(marker);
-            console.log(markers.length);  
+            markers.push(marker);  
           }//end of for loop
           $( "#tags" ).autocomplete({
            source: gather_artist_names()
