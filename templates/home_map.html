@@ -47,12 +47,21 @@
         }
       }
 
+      function gather_artist_names(){
+        var artist_names = []
+        for (var i = 0; i < markers.length; i++){
+          artist_names = artist_names.concat(markers[i].artist); 
+        }
+        return artist_names; 
+      }
+
       function initMap() {
         map = new google.maps.Map(document.getElementById('art-map'), {
           center: {lat: 37.7748, lng: -122.435},
           zoom: 13
           
         });
+
 
         // styling 
          var styles = [
@@ -357,7 +366,6 @@
           content: contentString
         });
 
-
         // retrieves artpiece info with AJAX
         $.get("/pieces.json", function(data){
           pieces = data["results"]
@@ -387,7 +395,7 @@
               artists += marker.artist[name]; 
               artists += '</h3>'; 
             }
-              
+               
             let contentString = '<div>'+ 
             '<h2>' + title + '</h2>'+ artists +
             '<h4>' + timeperiod + '</h4>' +
@@ -402,33 +410,27 @@
             marker.addListener('click', function(){
               infowindow.open(map, this); 
             }); //end of adding an event listener on a marker
-            markers.push(marker); 
+            markers.push(marker);
+            console.log(markers.length);  
           }//end of for loop
+          $( "#tags" ).autocomplete({
+           source: gather_artist_names()
+          });//filling in the auto complete widget 
         });//end of $.get 
       } //end of initMap
 
-       $( function() {
-          var artists_names = []
-          $.get("/artistnames", function(names){
-            artists_names = names.slice()
-            $( "#tags" ).autocomplete({
-              source: artists_names
-            });
-          }); 
-        } );
-
+      var names = gather_artist_names(); 
+      console.log(names); 
        $("#submit-name").on("click", function(evt){
           evt.preventDefault();
           setMapOnAll(null);
           var searchArtist = $("#tags").val(); 
-          for (var i = 0; i < markers.length; i++){
-            console.log(markers[i].artist); 
+          for (var i = 0; i < markers.length; i++){ 
             if((markers[i].artist.indexOf(searchArtist)) !== -1){
               markers[i].setMap(map);
             }
           }
        }); 
-      
       // https://jqueryui.com/autocomplete/
     </script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBtKiwRX-zLzkYEixhVxUlRPxdj0AKxRCM&callback=initMap"

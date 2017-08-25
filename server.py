@@ -15,39 +15,42 @@ def return_pieces():
     """JSON information about artpieces."""
 
     artpieces = Artpiece.query.all()
-    art = []
+    art = [] # list of all the artpieces
     # going through each row returned from the query 
     for ap in artpieces:
         info = {}
         names = []
-        artists = ap.artists # 
+        artists = ap.artists #retrieve instance attribute
         for artist in artists: 
             names.append(artist.name)
 
-        info["artist"] = names
-        info["title"] = ap.title 
+        info["artist"] = names # key="artist" value=names
+        info["title"] = ap.title  # key="title" value=ap.title
 
-        lat = float(ap.coords[0])
+        lat = float(ap.coords[0]) 
         lng = float(ap.coords[1])
-        info["coords"] = [lat,lng]
-        info["timeperiod"] =  ap.timeperiod
+        info["coords"] = [lat,lng] #key="coords" value="[lat,lng]"
+        info["timeperiod"] =  ap.timeperiod #key="timeperiod" value=ap.timeperiod
         medium = ap.medium
         if medium: 
-            info["med_desc"] = ap.medium.medium_desc
-        creditline = ap.creditline
+            info["med_desc"] = ap.medium.medium_desc #key="med_desc" value=ap.medium.medium_desc 
+        creditline = ap.creditline 
         # import pdb; pdb.set_trace()
         if creditline:
-            print creditline.creditline_name
-            info["creditline"] = creditline.creditline_name
-        info["loc_desc"] = ap.loc_desc
-        art.append(info)
+            info["creditline"] = creditline.creditline_name #key="creditline" 
+            #value=creditline.creditline_names
+        info["loc_desc"] = ap.loc_desc #key="loc_desc" value=ap.loc_desc
+        art.append(info) 
 
+    #end of for-loop
     return jsonify({"results": art})
 
 
 @app.route("/artistnames")
-def return_artistnames(): 
-    names = []
+def return_artistnames():
+    """Return artist names from Artist table""" 
+
+    names = [] #list for artist names
     rows = db.session.query(Artist.name).all()
     for row in rows: 
         names.append(row[0])
