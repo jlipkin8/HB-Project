@@ -77,6 +77,49 @@
         };
         return pos; 
       }
+
+      //handle Route response
+      function handleRoute(response, status){
+        if(status === 'OK'){
+          directionsDisplay.setDirections(response);
+        }else{
+          window.alert("Directions request failed due to " + status); 
+        }
+      }
+
+      //handle the click of the "dir-btn" events 
+      function handleDirBtnEvent(){
+        console.log("sending directions"); 
+        /*Want to send direction request after I press the create walk
+        button and choose which markers I want as waypoints
+        */
+        
+        directionsDisplay.setMap(map);
+        directionsDisplay.setPanel(document.getElementById('directions-panel'));
+        //just using for testing purposes
+        var haight = new google.maps.LatLng(37.7699298, -122.4469157);
+        var oceanBeach = new google.maps.LatLng(37.7683909618184, -122.51089453697205);
+        
+        //creating a DirectionsRequest object 
+        var dirRequest = {
+          origin: haight, //get current location
+          destination: haight,//last waypoint
+          travelMode: 'WALKING', 
+          waypoints: waypts,
+          optimizeWaypoints: true
+        }
+        // calculate route 
+        directionsService.route(dirRequest, handleRoute);//end of call of route() method
+      }
+
+
+      function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+        infoWindow.setPosition(pos);
+        infoWindow.setContent(browserHasGeolocation ?
+                              'Error: The Geolocation service failed.' :
+                              'Error: Your browser doesn\'t support geolocation.');
+        infoWindow.open(map);
+      }
         
       function initMap() {
         //instantiate a DirectionsService Object 
@@ -140,61 +183,53 @@
             markers.push(marker);  
           }//end of for loop
             //add event handler to create walk btn 
-          $("#walk-btn").on("click", function(){
-            console.log("clicky"); 
+          $("#walk-btn").on("click", function(){ 
             addHandlersOnMarkers(markers); 
           }); // end of walk btn even handler
 
           if (navigator.geolocation) {
-              var infoWindow = new google.maps.InfoWindow({
-              });
-
-              navigator.geolocation.getCurrentPosition(handleGeoLocation, function() {
+            navigator.geolocation.getCurrentPosition(function(position){
+              var pos = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
+              };
+              $("#dir-btn").on("click", function(){
+                console.log("sending directions"); 
+                /*Want to send direction request after I press the create walk
+                button and choose which markers I want as waypoints
+                */
+                
+                directionsDisplay.setMap(map);
+                directionsDisplay.setPanel(document.getElementById('directions-panel'));
+                //just using for testing purposes
+                var haight = new google.maps.LatLng(37.7699298, -122.4469157);
+                var oceanBeach = new google.maps.LatLng(37.7683909618184, -122.51089453697205);
+                
+                //creating a DirectionsRequest object 
+                var dirRequest = {
+                  origin: pos, //get current location
+                  destination: pos,// end at current location
+                  travelMode: 'WALKING', 
+                  waypoints: waypts,
+                  optimizeWaypoints: true
+                }
+                // calculate route 
+                directionsService.route(dirRequest, function(response, status){
+                  if(status === 'OK'){
+                    directionsDisplay.setDirections(response);
+                  }else{
+                    window.alert("Directions request failed due to " + status); 
+                  }
+                });//end of call of route() method
+              });//end of directions btn event handler
+            }, function() {
                 handleLocationError(true, infoWindow, map.getCenter());
-              });
+            });
           } else {
             // Browser doesn't support Geolocation
             handleLocationError(false, infoWindow, map.getCenter());
           } 
-          //add event handler to get directions btn 
-          $("#dir-btn").on("click", function(){
-            console.log("sending directions"); 
-            /*Want to send direction request after I press the create walk
-            button and choose which markers I want as waypoints
-            */
-            
-            directionsDisplay.setMap(map);
-            directionsDisplay.setPanel(document.getElementById('directions-panel'));
-            //just using for testing purposes
-            var haight = new google.maps.LatLng(37.7699298, -122.4469157);
-            var oceanBeach = new google.maps.LatLng(37.7683909618184, -122.51089453697205);
-            
-            //creating a DirectionsRequest object 
-            var dirRequest = {
-              origin: haight, //get current location
-              destination: haight,//last waypoint
-              travelMode: 'WALKING', 
-              waypoints: waypts,
-              optimizeWaypoints: true
-            }
-            // calculate route 
-            directionsService.route(dirRequest, function(response, status){
-              if(status === 'OK'){
-                directionsDisplay.setDirections(response);
-              }else{
-                window.alert("Directions request failed due to " + status); 
-              }
-            });//end of call of route() method
-          }); //edn of directions btn event handler
         });//end of $.get
-
-        function handleLocationError(browserHasGeolocation, infoWindow, pos) {
-          infoWindow.setPosition(pos);
-          infoWindow.setContent(browserHasGeolocation ?
-                                'Error: The Geolocation service failed.' :
-                                'Error: Your browser doesn\'t support geolocation.');
-          infoWindow.open(map);
-        }
       } //end of initMap
 
       // https://jqueryui.com/autocomplete/
