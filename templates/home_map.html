@@ -36,6 +36,9 @@
     <button id="walk-btn">
       Create Walk
     </button>
+    <button id="dir-btn">
+      Get Directions
+    </button>
     <script src="https://code.jquery.com/jquery.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script>
@@ -54,9 +57,9 @@
       function addHandlersOnMarkers(markers){
         console.log("this function is being called"); 
         for (var i = 0; i < markers.length; i++) {
-          markers[i].addListener('dblclick', function(){
-              waypoints.push(this.position.toJSON());
-              console.log(waypoints); 
+          markers[i].addListener('click', function(){
+              waypoints.push({locations:this.getPosition()}); 
+              this.setOpacity(0.4); 
           }); //end of adding an event listener on a marker
         }
       }
@@ -70,34 +73,10 @@
         map = new google.maps.Map(document.getElementById('art-map'), {
           center: {lat: 37.7748, lng: -122.435},
           zoom: 12,
-          gestureHandling: 'none',
-          zoomControl: false
+          // gestureHandling: 'none',
+          // zoomControl: false
           
         });
-
-        directionsDisplay.setMap(map); 
-
-        //just using for testing purposes
-        var haight = new google.maps.LatLng(37.7699298, -122.4469157);
-        var oceanBeach = new google.maps.LatLng(37.7683909618184, -122.51089453697205);
-        var waypoint1 = new google.maps.LatLng(37.7999299, -122.4439156); 
-        var waypoint2 = new google.maps.LatLng(37.7629300, -122.4462155); 
-        //creating a DirectionsRequest object 
-        var dirRequest = {
-          origin: haight , 
-          destination: oceanBeach,
-          travelMode: 'WALKING', 
-          waypoints: [{location:waypoint1}, {location:waypoint2}],
-          optimizeWaypoints: true
-        }
-        // calculate route 
-        directionsService.route(dirRequest, function(response, status){
-          if(status === 'OK'){
-            directionsDisplay.setDirections(response); 
-          }else{
-            window.alert("Directions request failed due to " + status); 
-          }
-        }); 
 
         // retrieves artpiece info with AJAX
         $.get("/pieces.json", function(data){
@@ -119,7 +98,8 @@
               med_desc: med_desc, 
               credit_line: credit_line, 
               loc_desc: loc_desc, 
-              artist: artist
+              artist: artist, 
+              opacity: 1.0
             });
   
             var artists = ""; 
@@ -150,6 +130,36 @@
             console.log("clicky"); 
             addHandlersOnMarkers(markers); 
           }); // end of walk btn even handler
+
+          //add event handler to get directions btn 
+          $("#dir-btn").on("click", function(){
+            console.log("sending directions"); 
+                /*Want to send direction request after I press the create walk
+            button and choose which markers I want as waypoints
+            */
+            directionsDisplay.setMap(map); 
+            console.log(waypoints[0]); 
+            //just using for testing purposes
+            var haight = new google.maps.LatLng(37.7699298, -122.4469157);
+            var oceanBeach = new google.maps.LatLng(37.7683909618184, -122.51089453697205);
+            
+            //creating a DirectionsRequest object 
+            var dirRequest = {
+              origin: haight , 
+              destination: oceanBeach,
+              travelMode: 'WALKING', 
+              waypoints: waypoints,
+              optimizeWaypoints: true
+            }
+            // calculate route 
+            directionsService.route(dirRequest, function(response, status){
+              if(status === 'OK'){
+                directionsDisplay.setDirections(response); 
+              }else{
+                window.alert("Directions request failed due to " + status); 
+              }
+            });//end of call of route() method
+          }); //edn of directions btn event handler
         });//end of $.get
         
         // Try HTML5 geolocation.
