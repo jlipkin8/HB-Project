@@ -39,13 +39,15 @@
     <button id="dir-btn">
       Get Directions
     </button>
+    <div id="directions-panel">
+    </div>
     <script src="https://code.jquery.com/jquery.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script>
       var map;
 
       var markers = []; 
-      var waypoints = []; 
+      var waypts = []; 
       // Sets the map on all markers in the array.
       //https://developers.google.com/maps/documentation/javascript/examples/marker-remove
       function setMapOnAll(map) {
@@ -58,7 +60,8 @@
         console.log("this function is being called"); 
         for (var i = 0; i < markers.length; i++) {
           markers[i].addListener('click', function(){
-              waypoints.push({locations:this.getPosition()}); 
+              console.log(this.getPosition())
+              waypts.push({location:this.getPosition()}); 
               this.setOpacity(0.4); 
           }); //end of adding an event listener on a marker
         }
@@ -137,8 +140,8 @@
                 /*Want to send direction request after I press the create walk
             button and choose which markers I want as waypoints
             */
-            directionsDisplay.setMap(map); 
-            console.log(waypoints[0]); 
+            directionsDisplay.setMap(map);
+            directionsDisplay.setPanel(document.getElementById('directions-panel'));
             //just using for testing purposes
             var haight = new google.maps.LatLng(37.7699298, -122.4469157);
             var oceanBeach = new google.maps.LatLng(37.7683909618184, -122.51089453697205);
@@ -148,13 +151,26 @@
               origin: haight , 
               destination: oceanBeach,
               travelMode: 'WALKING', 
-              waypoints: waypoints,
+              waypoints: waypts,
               optimizeWaypoints: true
             }
             // calculate route 
             directionsService.route(dirRequest, function(response, status){
               if(status === 'OK'){
-                directionsDisplay.setDirections(response); 
+                directionsDisplay.setDirections(response);
+                // var route = response.routes[0]; 
+                // console.log(route);
+                // var summaryPanel = document.getElementById('directions-panel');
+                // summaryPanel.innerHTML = '';
+                // // For each route, display summary information.
+                // for (var i = 0; i < route.legs.length; i++) {
+                //   var routeSegment = i + 1;
+                //   for (var j = 0; j < route.legs[i].steps.length; j++){
+                //     console.log(route.legs[i].steps[j].instructions);
+                //     var step = '<p>' + route.legs[i].steps[j].instructions + '</p>'; 
+                //     summaryPanel.innerHTML +=  step 
+                //   }
+                // } 
               }else{
                 window.alert("Directions request failed due to " + status); 
               }
