@@ -41,6 +41,8 @@
     </button>
     <div id="directions-panel">
     </div>
+    <div id="walk-time">
+    </div>
     <script src="https://code.jquery.com/jquery.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script>
@@ -177,9 +179,13 @@
             let infowindow = new google.maps.InfoWindow({
               content: contentString
             }); // end of making an infowindoq
-            marker.addListener('click', function(){
+            marker.addListener('mouseover', function(){
+              // console.log("do stuff"); 
               infowindow.open(map, this); 
             }); //end of adding an event listener on a marker
+            marker.addListener('mouseout', function(){
+              infowindow.close(); 
+            })
             markers.push(marker);  
           }//end of for loop
             //add event handler to create walk btn 
@@ -201,9 +207,6 @@
                 
                 directionsDisplay.setMap(map);
                 directionsDisplay.setPanel(document.getElementById('directions-panel'));
-                //just using for testing purposes
-                var haight = new google.maps.LatLng(37.7699298, -122.4469157);
-                var oceanBeach = new google.maps.LatLng(37.7683909618184, -122.51089453697205);
                 
                 //creating a DirectionsRequest object 
                 var dirRequest = {
@@ -216,7 +219,20 @@
                 // calculate route 
                 directionsService.route(dirRequest, function(response, status){
                   if(status === 'OK'){
+                    var duration = 0; 
+                    console.log(response); 
                     directionsDisplay.setDirections(response);
+                    var route = response.routes[0]; 
+                    for(var i = 0; i < route.legs.length; i++){
+                      duration += route.legs[i].duration.value; 
+                    }
+                    console.log("duration: ", duration);
+                    durationMins = Math.round(duration/60);
+                    divMin = document.getElementById("walk-time"); 
+                    divMin.innerHTML = "<p>" + durationMins + " mins" + "</p>"; 
+                    if(durationMins > 60){
+                      window.alert("Are you sure you want to walk " + durationMins +" mins?"); 
+                    } 
                   }else{
                     window.alert("Directions request failed due to " + status); 
                   }
