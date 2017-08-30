@@ -153,34 +153,102 @@ function initMap() {
     $("#rand-btn").click(function (evt) {
       $("#miles-btn").click(function(event){
         event.preventDefault();
-        var walkRadius = $("#miles").val();
-        console.log("+----------#")
-        console.log(walkRadius);
-        var walkRadiusMeters = walkRadius * 1609.34;
-        var cityCircle = new google.maps.Circle({
-            strokeColor: '#FF0000',
-            strokeOpacity: 0.8,
-            strokeWeight: 2,
-            fillColor: '#FF0000',
-            fillOpacity: 0.35,
-            map: map,
-            center: {lat: 37.7748, lng: -122.435},
-            radius: walkRadiusMeters
-        });
+        //getting directions for randomewalk 
+         if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(function(position){
+            var pos = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+            };
+
+            var walkRadius = $("#miles").val();
+            walkRadius = walkRadius/2.0; 
+            console.log(walkRadius); 
+            console.log("/////////////////")
+            console.log(walkRadius);
+            var walkRadiusMeters = walkRadius * 1609.34;
+            var cityCircle = new google.maps.Circle({
+                strokeColor: '#FF0000',
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: '#FF0000',
+                fillOpacity: 0.35,
+                map: map,
+                center: pos,
+                radius: walkRadiusMeters
+            });
+            var bounds = cityCircle.getBounds();
+            var grabBagMarkers = []; 
+            for(var i = 0; i < markers.length; i++){
+              if(bounds.contains(markers[i].getPosition())){
+                grabBagMarkers.push(markers[i]); 
+              }else{
+                console.log("gotta do this"); 
+                markers[i].setMap(null); 
+              }
+            }
+            console.log("*-------*");
+            console.log(grabBagMarkers);
+
+            /* Choose a few random markers from grabBagMarker */ 
+            var selectedMarkers = []; 
+            var index = Math.floor(Math.random() * grabBagMarkers.length);
+            selectedMarkers.push(grabBagMarkers[index]); 
+            index = Math.floor(Math.random() * grabBagMarkers.length);
+            selectedMarkers.push(grabBagMarkers[index]);
+            console.log(selectedMarkers);
+            var randWayPoints = []; 
+
+            for(var i = 0; i < selectedMarkers.length; i++){
+              var wayLocation = selectedMarkers[i].getPosition(); 
+              randWayPoints.push({location: wayLocation}); 
+            }
+            console.log("---===------====-----====="); 
+            console.log(randWayPoints); 
+
+            console.log("sending directions for randomewalk"); 
+            directionsDisplay.setMap(map);
+            directionsDisplay.setPanel(document.getElementById('directions-panel'));
+            
+            //creating a DirectionsRequest object 
+            var randDirRequest = {
+              origin: pos, //get current location
+              destination: pos,// end at current location
+              travelMode: 'WALKING', 
+              waypoints: randWayPoints,
+              optimizeWaypoints: true
+            }
+              // calculate route 
+              directionsService.route(randDirRequest, function(response, status){
+                if(status === 'OK'){
+                  var duration = 0; 
+                  console.log(response); 
+                  directionsDisplay.setDirections(response);
+                  var route = response.routes[0];
+                  for(var i = 0; i < route.legs.length; i++){
+                    duration += route.legs[i].duration.value; 
+                  }
+                  console.log("duration: ", duration);
+                  durationMins = Math.round(duration/60);
+                  divMin = document.getElementById("walk-time"); 
+                  divMin.innerHTML = "<p>" + durationMins + " mins" + "</p>"; 
+                  if(durationMins > 60){
+                    window.alert("Are you sure you want to walk " + durationMins +" mins?"); 
+                  } 
+                }else{
+                  window.alert("Directions request failed due to " + status); 
+                }
+              });//end of call of route() method
+          }, function() {
+              handleLocationError(true, infoWindow, map.getCenter());
+          });
+        } else {
+          // Browser doesn't support Geolocation
+          handleLocationError(false, infoWindow, map.getCenter());
+        } 
+
 
       }) 
-        var bounds = cityCircle.getBounds(); 
-        console.log(cityCircle.getBounds()); 
-        console.log(bounds.contains({lat: 37.7748, lng: -122.435})); 
-        console.log("*-------*");
-        var grabBagMarkers = []; 
-        for(var i = 0; i < markers.length; i++){
-          if(bounds.contains(markers[i].getPosition())){
-            grabBagMarkers.push(markers[i]); 
-          }
-        }
-        console.log("*-------*");
-        console.log(grabBagMarkers); 
     });
     // end of random walk button event handler
     if (navigator.geolocation) {
