@@ -24,56 +24,21 @@ function addHandlersOnMarkers(markers){
   }
 }
 
-// Try HTML5 geolocation.
-function handleGeoLocation(position){
-  var pos = {
-    lat: position.coords.latitude,
-    lng: position.coords.longitude
-  };
-  return pos; 
-}
-
-//handle Route response
-function handleRoute(response, status){
-  if(status === 'OK'){
-    directionsDisplay.setDirections(response);
-  }else{
-    window.alert("Directions request failed due to " + status); 
-  }
-}
-
-//handle the click of the "dir-btn" events 
-function handleDirBtnEvent(){
-  console.log("sending directions"); 
-  /*Want to send direction request after I press the create walk
-  button and choose which markers I want as waypoints
-  */
-
-  directionsDisplay.setMap(map);
-  directionsDisplay.setPanel(document.getElementById('directions-panel'));
-  //just using for testing purposes
-  var haight = new google.maps.LatLng(37.7699298, -122.4469157);
-  var oceanBeach = new google.maps.LatLng(37.7683909618184, -122.51089453697205);
-
-  //creating a DirectionsRequest object 
-  var dirRequest = {
-    origin: haight, //get current location
-    destination: haight,//last waypoint
-    travelMode: 'WALKING', 
-    waypoints: waypts,
-    optimizeWaypoints: true
-  }
-  // calculate route 
-  directionsService.route(dirRequest, handleRoute);//end of call of route() method
-}
-
-
 function handleLocationError(browserHasGeolocation, infoWindow, pos) {
   infoWindow.setPosition(pos);
   infoWindow.setContent(browserHasGeolocation ?
                         'Error: The Geolocation service failed.' :
                         'Error: Your browser doesn\'t support geolocation.');
   infoWindow.open(map);
+}
+
+function getRandomMarkers(numOfChoices, markerArray, newMarkerArray){
+  //Pushes random markers into a new array 
+  var index; 
+  for(var i = 0; i <= numOfChoices; i++){
+    index = Math.floor(Math.random() * markerArray.length);
+    newMarkerArray.push(markerArray[index]); 
+  }
 }
 
 function initMap() {
@@ -146,10 +111,6 @@ function initMap() {
       addHandlersOnMarkers(markers); 
     }); // end of walk btn even handler
 
-    // start of handling click event for random walk button 
-    // $("#rand-btn").on("click", function(){
-    //   console.log("let's create a random wallllk"); 
-    // });
     $("#rand-btn").click(function (evt) {
       $("#miles-btn").click(function(event){
         event.preventDefault();
@@ -177,26 +138,35 @@ function initMap() {
                 center: pos,
                 radius: walkRadiusMeters
             });
-            var bounds = cityCircle.getBounds();
-            var grabBagMarkers = []; 
-            for(var i = 0; i < markers.length; i++){
-              if(bounds.contains(markers[i].getPosition())){
-                grabBagMarkers.push(markers[i]); 
-              }else{
-                console.log("gotta do this"); 
-                markers[i].setMap(null); 
+
+            function storeInboundMarkers(bounds, markers, inboundMarkers){
+              //stores markers that inbounds in a new array
+              for(var i = 0; i < markers.length; i++){
+                if(bounds.contains(markers[i].getPosition())){
+                  inboundMarkers.push(markers[i]); 
+                }else{
+                  markers[i].setMap(null); 
+                }
               }
             }
-            console.log("*-------*");
-            console.log(grabBagMarkers);
-
+            var bounds = cityCircle.getBounds();
+            var grabBagMarkers = [];
+            //calling storeInboundMarkers
+            storeInboundMarkers(bounds, markers, grabBagMarkers); 
+            // for(var i = 0; i < markers.length; i++){
+            //   if(bounds.contains(markers[i].getPosition())){
+            //     grabBagMarkers.push(markers[i]); 
+            //   }else{
+            //     console.log("gotta do this"); 
+            //     markers[i].setMap(null); 
+            //   }
+            // }
+           
             /* Choose a few random markers from grabBagMarker */ 
-            var selectedMarkers = []; 
-            var index = Math.floor(Math.random() * grabBagMarkers.length);
-            selectedMarkers.push(grabBagMarkers[index]); 
-            index = Math.floor(Math.random() * grabBagMarkers.length);
-            selectedMarkers.push(grabBagMarkers[index]);
-            console.log(selectedMarkers);
+            var selectedMarkers = [];
+            //call get RandomMarkers()
+            getRandomMarkers(3, grabBagMarkers, selectedMarkers); 
+            
             var randWayPoints = []; 
 
             for(var i = 0; i < selectedMarkers.length; i++){
