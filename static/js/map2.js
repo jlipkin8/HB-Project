@@ -79,13 +79,25 @@ function initMap() {
         opacity: 1.0
       });
 
+      // createHtmlArtists is supposed to replace the code below it
+      function createHtmlArtists(artistList){
+        var htmlArtists = ""; 
+        for(var name in artistList){
+          htmlArtists += '<h3>'; 
+          htmlArtists += artistList[name]; 
+          htmlArtists += '</h3>'; 
+        }
+        return htmlArtists; 
+      }
+      var artists = createHtmlArtists(marker.artist); 
       var artists = ""; 
       for(var name in marker.artist){
         artists += '<h3>'; 
         artists += marker.artist[name]; 
         artists += '</h3>'; 
       }
-         
+      // end of the createHtmlArtists
+      
       let contentString = '<div>'+ 
       '<h2>' + title + '</h2>'+ artists +
       '<h4>' + timeperiod + '</h4>' +
