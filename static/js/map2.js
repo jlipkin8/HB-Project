@@ -4,24 +4,24 @@ var map;
 var markers = []; 
 var waypts = [];
 var currPos; 
+
 // Sets the map on all markers in the array.
-//https://developers.google.com/maps/documentation/javascript/examples/marker-remove
-function setMapOnAll(map) {
-  for (var i = 0; i < markers.length; i++) {
-    markers[i].setMap(map);
-  }
+function setMapOnAll(map, markerArray){
+  markerArray.forEach(function(marker){
+    marker.setMap(map); 
+  }); 
 }
 
 //adds event handlers to markers 
-function addHandlersOnMarkers(markers){
-  console.log("this function is being called"); 
-  for (var i = 0; i < markers.length; i++) {
-    markers[i].addListener('click', function(){
-        console.log(this.getPosition())
-        waypts.push({location:this.getPosition()}); 
-        this.setOpacity(0.4); 
-    }); //end of adding an event listener on a marker
-  }
+function addHandlersOnMarkers(markerArray, wayptArray){ 
+  markerArray.forEach(function(marker){
+    $(marker).click(function(){
+      //pushes waypoint literal to waypoint array
+      wayptArray.push({location:this.getCurrentPosition()});
+      //changes opacity of marker 
+      this.setOpacity(0.4); 
+    });//end of adding an event listener on a marker
+  }); 
 }
 
 function handleLocationError(browserHasGeolocation, infoWindow, pos) {
@@ -40,6 +40,37 @@ function getRandomMarkers(numOfChoices, markerArray, newMarkerArray){
     newMarkerArray.push(markerArray[index]); 
   }
 }
+
+function storeInboundMarkers(bounds, markers, inboundMarkers){
+  //stores markers that inbounds in a new array
+  for(var i = 0; i < markers.length; i++){
+    if(bounds.contains(markers[i].getPosition())){
+      inboundMarkers.push(markers[i]); 
+    }else{
+      markers[i].setMap(null); 
+    }
+  }
+}
+
+function createHtmlArtists(artistList){
+  var htmlArtists = ""; 
+  for(var name in artistList){
+    htmlArtists += '<h3>'; 
+    htmlArtists += artistList[name]; 
+    htmlArtists += '</h3>'; 
+  }
+  return htmlArtists; 
+}
+
+function calcRouteDurationMins(route){
+  var duration = 0;
+  for(var i = 0; i < route.legs.length; i++){
+    duration += route.legs[i].duration.value; 
+  }
+  var durationMins = Math.round(duration/60);
+  return durationMins; 
+}
+
 
 function initMap() {
   //instantiate a DirectionsService Object 
@@ -80,23 +111,7 @@ function initMap() {
       });
 
       // createHtmlArtists is supposed to replace the code below it
-      function createHtmlArtists(artistList){
-        var htmlArtists = ""; 
-        for(var name in artistList){
-          htmlArtists += '<h3>'; 
-          htmlArtists += artistList[name]; 
-          htmlArtists += '</h3>'; 
-        }
-        return htmlArtists; 
-      }
       var artists = createHtmlArtists(marker.artist); 
-      var artists = ""; 
-      for(var name in marker.artist){
-        artists += '<h3>'; 
-        artists += marker.artist[name]; 
-        artists += '</h3>'; 
-      }
-      // end of the createHtmlArtists
       
       let contentString = '<div>'+ 
       '<h2>' + title + '</h2>'+ artists +
@@ -120,7 +135,7 @@ function initMap() {
     }//end of for loop
       //add event handler to create walk btn 
     $("#walk-btn").on("click", function(){
-      addHandlersOnMarkers(markers); 
+      addHandlersOnMarkers(markers, waypts); 
     }); // end of walk btn even handler
 
     $("#rand-btn").click(function (evt) {
@@ -151,29 +166,11 @@ function initMap() {
                 radius: walkRadiusMeters
             });
 
-            function storeInboundMarkers(bounds, markers, inboundMarkers){
-              //stores markers that inbounds in a new array
-              for(var i = 0; i < markers.length; i++){
-                if(bounds.contains(markers[i].getPosition())){
-                  inboundMarkers.push(markers[i]); 
-                }else{
-                  markers[i].setMap(null); 
-                }
-              }
-            }
             var bounds = cityCircle.getBounds();
             var grabBagMarkers = [];
             //calling storeInboundMarkers
             storeInboundMarkers(bounds, markers, grabBagMarkers); 
-            // for(var i = 0; i < markers.length; i++){
-            //   if(bounds.contains(markers[i].getPosition())){
-            //     grabBagMarkers.push(markers[i]); 
-            //   }else{
-            //     console.log("gotta do this"); 
-            //     markers[i].setMap(null); 
-            //   }
-            // }
-           
+
             /* Choose a few random markers from grabBagMarker */ 
             var selectedMarkers = [];
             //call get RandomMarkers()
@@ -185,10 +182,7 @@ function initMap() {
               var wayLocation = selectedMarkers[i].getPosition(); 
               randWayPoints.push({location: wayLocation}); 
             }
-            console.log("---===------====-----====="); 
-            console.log(randWayPoints); 
 
-            console.log("sending directions for randomewalk"); 
             directionsDisplay.setMap(map);
             directionsDisplay.setPanel(document.getElementById('directions-panel'));
             
@@ -202,19 +196,13 @@ function initMap() {
             }
               // calculate route 
               directionsService.route(randDirRequest, function(response, status){
-                if(status === 'OK'){
-                  var duration = 0; 
-                  console.log(response); 
+                if(status === 'OK'){ 
                   directionsDisplay.setDirections(response);
-                  var route = response.routes[0];
-                  for(var i = 0; i < route.legs.length; i++){
-                    duration += route.legs[i].duration.value; 
-                  }
-                  console.log("duration: ", duration);
-                  durationMins = Math.round(duration/60);
+                  var route = response.routes[0]; 
+                  var dur = calcRouteDurationMins(route); 
                   divMin = document.getElementById("walk-time"); 
-                  divMin.innerHTML = "<p>" + durationMins + " mins" + "</p>"; 
-                  if(durationMins > 60){
+                  divMin.innerHTML = "<p>" + dur + " mins" + "</p>"; 
+                  if(dur > 60){
                     window.alert("Are you sure you want to walk " + durationMins +" mins?"); 
                   } 
                 }else{
@@ -241,7 +229,6 @@ function initMap() {
         };
         //start of handling click event for directons button 
         $("#dir-btn").on("click", function(){
-          console.log("sending directions"); 
           directionsDisplay.setMap(map);
           directionsDisplay.setPanel(document.getElementById('directions-panel'));
           
@@ -255,19 +242,13 @@ function initMap() {
           }
           // calculate route 
           directionsService.route(dirRequest, function(response, status){
-            if(status === 'OK'){
-              var duration = 0; 
-              console.log(response); 
+            if(status === 'OK'){ 
               directionsDisplay.setDirections(response);
               var route = response.routes[0]; 
-              for(var i = 0; i < route.legs.length; i++){
-                duration += route.legs[i].duration.value; 
-              }
-              console.log("duration: ", duration);
-              durationMins = Math.round(duration/60);
+              var dur = calcRouteDurationMins(route); 
               divMin = document.getElementById("walk-time"); 
-              divMin.innerHTML = "<p>" + durationMins + " mins" + "</p>"; 
-              if(durationMins > 60){
+              divMin.innerHTML = "<p>" + dur + " mins" + "</p>"; 
+              if(dur > 60){
                 window.alert("Are you sure you want to walk " + durationMins +" mins?"); 
               } 
             }else{
@@ -299,7 +280,7 @@ $( function() {
 
 $("#submit-name").on("click", function(evt){
   evt.preventDefault();
-  setMapOnAll(null);
+  setMapOnAll(null, markers);
   var searchArtist = $("#tags").val(); 
   for (var i = 0; i < markers.length; i++){ 
     if((markers[i].artist.indexOf(searchArtist)) !== -1){
