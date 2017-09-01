@@ -12,21 +12,36 @@ function setMapOnAll(map, markerArray){
   }); 
 }
 
+//checks if marker was already clicken on
+function alreadyClickedOn(currMarker, waypoints){
+  var waypointLen = waypoints.length;
+  if(waypointLen == 0){
+    return false; 
+  }
+  for(var i = 0; i < waypointLen; i++){ 
+    if(waypoints[i]["location"] == currMarker.position){
+      return true;  
+    }
+    return false; 
+  }
+}
+
 //adds event handlers to markers 
 function addHandlersOnMarkers(markerArray, wayptArray){
   console.log("addHandlersOnMarkers");  
   markerArray.forEach(function(marker){
       marker.addListener("click", function(){
-      //pushes waypoint literal to waypoint array
-      wayptArray.push({location:this.getPosition()});
-      //changes opacity of marker 
-      this.setOpacity(0.3); 
-      //add marker info side bar
-      let l_item = $("<li></li>");
-      l_item.text(this.title);
-      $("#marker-lst").append(l_item);
-      $("#dir-btn").prop("disabled", false); 
-
+      if(!(alreadyClickedOn(this, wayptArray))){
+        //pushes waypoint literal to waypoint array
+        wayptArray.push({location:this.getPosition()});
+        //changes opacity of marker 
+        this.setOpacity(0.3); 
+        //add marker info side bar
+        let l_item = $("<li></li>");
+        l_item.text(this.title);
+        $("#marker-lst").append(l_item);
+        $("#dir-btn").prop("disabled", false); 
+      }
     });//end of adding an event listener on a marker
   }); 
 }
@@ -232,6 +247,7 @@ function initMap() {
       }) 
     });
     // end of random walk button event handler
+
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(function(position){
         var pos = {
@@ -243,11 +259,13 @@ function initMap() {
           directionsDisplay.setMap(map);
           directionsDisplay.setPanel(document.getElementById('directions-panel'));
           
+          console.log(waypts);
+          console.log(waypts[waypts.length - 1]["location"]); 
           //creating a DirectionsRequest object 
           var dirRequest = {
             origin: pos, //get current location
             //destination could be last waypoint
-            destination: pos,// end at current location
+            destination: waypts[waypts.length - 1]["location"],
             travelMode: 'WALKING', 
             waypoints: waypts,
             optimizeWaypoints: true
