@@ -30,31 +30,41 @@
       <div class="col-lg-8" id="art-map"></div>
       <div class="col-lg-4">
         <h1>Art Trek</h1>
-        <form action="#" hidden>
-            <label for="artist">Search by Artist Name:</label>
-            <input type="text" name="artistname" id="artist">
-            <input type="submit" value="Submit">
-        </form>
-        <div class="ui-widget">
-          <label for="tags">Search by Artist Name: </label>
-          <input id="tags" method="post">
-          <input type="submit" id="submit-name" value="Submit">
-        </div>
         <div id="buttons">
-          <button>
+          <button id="walk-btn">
             Create Walk
-          </button>
-          <button id="dir-btn">
-            Get Directions
           </button>
           <button id="rand-btn">
             Random Walk
           </button>
-          <form>
+          <form hidden>
               Miles to Walk (1 to 5):
               <input type="number" id="miles" name="quantity" min="1" max="5">
               <input type="submit" id="miles-btn">
           </form>
+          <div id="crt-walk" hidden>
+            <h2>Create Artist Walk</h2>
+            <ol>
+                <li>
+                  <div class="ui-widget">
+                    <label for="tags">Search by Artist Name!: </label>
+                    <input id="tags" method="post">
+                    <input type="submit" id="submit-name" value="Submit">
+                  </div>  
+                </li>
+                <li>
+                    <h3>Select Locations on Map</h3>
+                    <p>Click on markers to select location. 
+                        Do not choose more than 5.
+                    </p>
+                    <ol id="marker-lst">
+                    </ol>
+                </li>
+                <li>
+                    <button id="dir-btn">Get Directions</button>
+                </li>
+            </ol>
+          </div>
         </div>
         <div id="directions-panel">
         </div>

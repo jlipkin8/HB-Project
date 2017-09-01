@@ -21,7 +21,13 @@ function addHandlersOnMarkers(markerArray, wayptArray){
       wayptArray.push({location:this.getPosition()});
       //changes opacity of marker 
       this.setOpacity(0.3); 
-      console.log("CHAAANGE"); 
+      //add marker info side bar
+      let l_item = $("<li></li>");
+      console.log(l_item); 
+      l_item.text(this.title);
+      console.log(l_item); 
+      $("#marker-lst").append(l_item); 
+
     });//end of adding an event listener on a marker
   }); 
 }
@@ -141,7 +147,8 @@ function initMap() {
 
     //add event handler to create walk btn 
     $("#walk-btn").on("click", function(){
-      addHandlersOnMarkers(markers, waypts); 
+      addHandlersOnMarkers(markers, waypts);
+      $("#crt-walk").toggle();   
     }); // end of walk btn even handler
 
     $("#rand-btn").click(function (evt) {
