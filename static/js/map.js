@@ -4,69 +4,32 @@ var map;
 var markers = []; 
 var waypts = [];
 var currPos; 
+
 // Sets the map on all markers in the array.
-//https://developers.google.com/maps/documentation/javascript/examples/marker-remove
-function setMapOnAll(map) {
-  for (var i = 0; i < markers.length; i++) {
-    markers[i].setMap(map);
-  }
+function setMapOnAll(map, markerArray){
+  markerArray.forEach(function(marker){
+    marker.setMap(map); 
+  }); 
 }
 
 //adds event handlers to markers 
-function addHandlersOnMarkers(markers){
-  console.log("this function is being called"); 
-  for (var i = 0; i < markers.length; i++) {
-    markers[i].addListener('click', function(){
-        console.log(this.getPosition())
-        waypts.push({location:this.getPosition()}); 
-        this.setOpacity(0.4); 
-    }); //end of adding an event listener on a marker
-  }
+function addHandlersOnMarkers(markerArray, wayptArray){
+  console.log("addHandlersOnMarkers");  
+  markerArray.forEach(function(marker){
+      marker.addListener("click", function(){
+      //pushes waypoint literal to waypoint array
+      wayptArray.push({location:this.getPosition()});
+      //changes opacity of marker 
+      this.setOpacity(0.3); 
+      //add marker info side bar
+      let l_item = $("<li></li>");
+      l_item.text(this.title);
+      $("#marker-lst").append(l_item);
+      $("#dir-btn").prop("disabled", false); 
+
+    });//end of adding an event listener on a marker
+  }); 
 }
-
-// Try HTML5 geolocation.
-function handleGeoLocation(position){
-  var pos = {
-    lat: position.coords.latitude,
-    lng: position.coords.longitude
-  };
-  return pos; 
-}
-
-//handle Route response
-function handleRoute(response, status){
-  if(status === 'OK'){
-    directionsDisplay.setDirections(response);
-  }else{
-    window.alert("Directions request failed due to " + status); 
-  }
-}
-
-//handle the click of the "dir-btn" events 
-function handleDirBtnEvent(){
-  console.log("sending directions"); 
-  /*Want to send direction request after I press the create walk
-  button and choose which markers I want as waypoints
-  */
-
-  directionsDisplay.setMap(map);
-  directionsDisplay.setPanel(document.getElementById('directions-panel'));
-  //just using for testing purposes
-  var haight = new google.maps.LatLng(37.7699298, -122.4469157);
-  var oceanBeach = new google.maps.LatLng(37.7683909618184, -122.51089453697205);
-
-  //creating a DirectionsRequest object 
-  var dirRequest = {
-    origin: haight, //get current location
-    destination: haight,//last waypoint
-    travelMode: 'WALKING', 
-    waypoints: waypts,
-    optimizeWaypoints: true
-  }
-  // calculate route 
-  directionsService.route(dirRequest, handleRoute);//end of call of route() method
-}
-
 
 function handleLocationError(browserHasGeolocation, infoWindow, pos) {
   infoWindow.setPosition(pos);
@@ -76,10 +39,51 @@ function handleLocationError(browserHasGeolocation, infoWindow, pos) {
   infoWindow.open(map);
 }
 
+function getRandomMarkers(numOfChoices, markerArray, newMarkerArray){
+  //Pushes random markers into a new array 
+  var index; 
+  for(var i = 0; i <= numOfChoices; i++){
+    index = Math.floor(Math.random() * markerArray.length);
+    newMarkerArray.push(markerArray[index]); 
+  }
+}
+
+function storeInboundMarkers(bounds, markers, inboundMarkers){
+  //stores markers that inbounds in a new array
+  for(var i = 0; i < markers.length; i++){
+    if(bounds.contains(markers[i].getPosition())){
+      inboundMarkers.push(markers[i]); 
+    }else{
+      markers[i].setMap(null); 
+    }
+  }
+}
+
+function createHtmlArtists(artistList){
+  var htmlArtists = ""; 
+  for(var name in artistList){
+    htmlArtists += '<h3>'; 
+    htmlArtists += artistList[name]; 
+    htmlArtists += '</h3>'; 
+  }
+  return htmlArtists; 
+}
+
+function calcRouteDurationMins(route){
+  var duration = 0;
+  for(var i = 0; i < route.legs.length; i++){
+    duration += route.legs[i].duration.value; 
+  }
+  var durationMins = Math.round(duration/60);
+  return durationMins; 
+}
+
+
 function initMap() {
+  console.log("initMap"); 
   //instantiate a DirectionsService Object 
   var directionsService = new google.maps.DirectionsService;
-  //instantiate a DirectionsRenderer object 
+  //instantiate a DirectionsRenderer object
   var directionsDisplay = new google.maps.DirectionsRenderer;
   //instantiate a Map object 
   map = new google.maps.Map(document.getElementById('art-map'), {
@@ -87,12 +91,12 @@ function initMap() {
     zoom: 12,
     // gestureHandling: 'none',
     // zoomControl: false
-    
   });
 
   // retrieves artpiece info with AJAX
   $.get("/pieces.json", function(data){
     pieces = data["results"]
+    //iterate through results 
     for(var i in pieces){
       piece = pieces[i];
       let title = piece["title"]; 
@@ -112,15 +116,9 @@ function initMap() {
         loc_desc: loc_desc, 
         artist: artist, 
         opacity: 1.0
-      });
+      });//instantiate a Marker Object 
 
-      var artists = ""; 
-      for(var name in marker.artist){
-        artists += '<h3>'; 
-        artists += marker.artist[name]; 
-        artists += '</h3>'; 
-      }
-         
+      var artists = createHtmlArtists(marker.artist); 
       let contentString = '<div>'+ 
       '<h2>' + title + '</h2>'+ artists +
       '<h4>' + timeperiod + '</h4>' +
@@ -129,41 +127,126 @@ function initMap() {
       '<p>' + loc_desc + '</p>' +
       '</div>'; 
 
+      //instantiate an InfoWindow Object
       let infowindow = new google.maps.InfoWindow({
         content: contentString
-      }); // end of making an infowindoq
+      }); 
+
+      //add event listeners to each marker
       marker.addListener('mouseover', function(){
-        // console.log("do stuff"); 
         infowindow.open(map, this); 
-      }); //end of adding an event listener on a marker
+      }); 
       marker.addListener('mouseout', function(){
         infowindow.close(); 
       })
+
+      //push marker into markers array 
       markers.push(marker);  
     }//end of for loop
-      //add event handler to create walk btn 
-    $("#walk-btn").on("click", function(){ 
-      addHandlersOnMarkers(markers); 
+
+    //add event handler to create walk btn 
+    $("#walk-btn").on("click", function(){
+      addHandlersOnMarkers(markers, waypts);
+      $("#crt-walk").toggle("slow");   
     }); // end of walk btn even handler
 
+    $("#rand-btn").click(function (evt) {
+      $("#miles-btn").click(function(event){
+        event.preventDefault();
+        //getting directions for randomewalk 
+         if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(function(position){
+            var pos = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+            };
+
+            var walkRadius = $("#miles").val();
+            walkRadius = walkRadius/2.0; 
+            console.log(walkRadius); 
+            console.log("/////////////////")
+            console.log(walkRadius);
+            var walkRadiusMeters = walkRadius * 1609.34;
+            var cityCircle = new google.maps.Circle({
+                strokeColor: '#FF0000',
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: '#FF0000',
+                fillOpacity: 0.35,
+                map: map,
+                center: pos,
+                radius: walkRadiusMeters
+            });
+
+            var bounds = cityCircle.getBounds();
+            var grabBagMarkers = [];
+            //calling storeInboundMarkers
+            storeInboundMarkers(bounds, markers, grabBagMarkers); 
+
+            /* Choose a few random markers from grabBagMarker */ 
+            var selectedMarkers = [];
+            getRandomMarkers(3, grabBagMarkers, selectedMarkers); 
+            
+            var randWayPoints = []; 
+
+            for(var i = 0; i < selectedMarkers.length; i++){
+              var wayLocation = selectedMarkers[i].getPosition(); 
+              randWayPoints.push({location: wayLocation}); 
+            }
+
+            directionsDisplay.setMap(map);
+            directionsDisplay.setPanel(document.getElementById('directions-panel'));
+            
+            //creating a DirectionsRequest object 
+            var randDirRequest = {
+              origin: pos, //get current location
+              destination: pos,// end at current location
+              travelMode: 'WALKING', 
+              waypoints: randWayPoints,
+              optimizeWaypoints: true
+            }
+              // calculate route 
+              directionsService.route(randDirRequest, function(response, status){
+                if(status === 'OK'){ 
+                  directionsDisplay.setDirections(response);
+                  var route = response.routes[0]; 
+                  var dur = calcRouteDurationMins(route); 
+                  divMin = document.getElementById("walk-time"); 
+                  divMin.innerHTML = "<p>" + dur + " mins" + "</p>"; 
+                  if(dur > 60){
+                    window.alert("Are you sure you want to walk " + durationMins +" mins?"); 
+                  } 
+                }else{
+                  window.alert("Directions request failed due to " + status); 
+                }
+              });//end of call of route() method
+          }, function() {
+              handleLocationError(true, infoWindow, map.getCenter());
+          });
+        } else {
+          // Browser doesn't support Geolocation
+          handleLocationError(false, infoWindow, map.getCenter());
+        } 
+
+
+      }) 
+    });
+    // end of random walk button event handler
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(function(position){
         var pos = {
           lat: position.coords.latitude,
           lng: position.coords.longitude
         };
+        //start of handling click event for directons button 
         $("#dir-btn").on("click", function(){
-          console.log("sending directions"); 
-          /*Want to send direction request after I press the create walk
-          button and choose which markers I want as waypoints
-          */
-          
           directionsDisplay.setMap(map);
           directionsDisplay.setPanel(document.getElementById('directions-panel'));
           
           //creating a DirectionsRequest object 
           var dirRequest = {
             origin: pos, //get current location
+            //destination could be last waypoint
             destination: pos,// end at current location
             travelMode: 'WALKING', 
             waypoints: waypts,
@@ -171,19 +254,14 @@ function initMap() {
           }
           // calculate route 
           directionsService.route(dirRequest, function(response, status){
-            if(status === 'OK'){
-              var duration = 0; 
-              console.log(response); 
+            if(status === 'OK'){ 
+              $("#crt-walk").toggle("slow"); 
               directionsDisplay.setDirections(response);
               var route = response.routes[0]; 
-              for(var i = 0; i < route.legs.length; i++){
-                duration += route.legs[i].duration.value; 
-              }
-              console.log("duration: ", duration);
-              durationMins = Math.round(duration/60);
+              var dur = calcRouteDurationMins(route); 
               divMin = document.getElementById("walk-time"); 
-              divMin.innerHTML = "<p>" + durationMins + " mins" + "</p>"; 
-              if(durationMins > 60){
+              divMin.innerHTML = "<p>" + dur + " mins" + "</p>"; 
+              if(dur > 60){
                 window.alert("Are you sure you want to walk " + durationMins +" mins?"); 
               } 
             }else{
@@ -215,11 +293,15 @@ $( function() {
 
 $("#submit-name").on("click", function(evt){
   evt.preventDefault();
-  setMapOnAll(null);
-  var searchArtist = $("#tags").val(); 
-  for (var i = 0; i < markers.length; i++){ 
-    if((markers[i].artist.indexOf(searchArtist)) !== -1){
-      markers[i].setMap(map);
+  var searchArtist = $("#tags").val();
+  if(searchArtist){
+    setMapOnAll(null, markers);
+    for (var i = 0; i < markers.length; i++){ 
+      if((markers[i].artist.indexOf(searchArtist)) !== -1){
+        markers[i].setMap(map);
+      }
     }
+  }else{
+    setMapOnAll(map, markers); 
   }
 }); //end of click event 
