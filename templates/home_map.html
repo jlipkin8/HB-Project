@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
     <style type="text/css">
         html, body {
              height: 100%; 
@@ -8,7 +9,7 @@
              padding: 0; 
         }
         #art-map { 
-            height: 75%; 
+            height: 100%; 
             background-color: pink;  
         }
         form {
@@ -17,42 +18,51 @@
         .ui-widget {
           margin: 20px; 
         }
+
+        .row{
+          height: 100%;
+        }
     </style>
 </head>
 
 <body>
-    <h1>SF Civic Art</h1>
-    <div id="art-map"></div>
-    <form action="#" hidden>
-        <label for="artist">Search by Artist Name:</label>
-        <input type="text" name="artistname" id="artist">
-        <input type="submit" value="Submit">
-    </form>
-    <div class="ui-widget">
-      <label for="tags">Search by Artist Name: </label>
-      <input id="tags" method="post">
-      <input type="submit" id="submit-name" value="Submit">
+    <div class="row">
+      <div class="col-lg-8" id="art-map"></div>
+      <div class="col-lg-4">
+        <h1>Art Trek</h1>
+        <form action="#" hidden>
+            <label for="artist">Search by Artist Name:</label>
+            <input type="text" name="artistname" id="artist">
+            <input type="submit" value="Submit">
+        </form>
+        <div class="ui-widget">
+          <label for="tags">Search by Artist Name: </label>
+          <input id="tags" method="post">
+          <input type="submit" id="submit-name" value="Submit">
+        </div>
+        <div id="buttons">
+          <button>
+            Create Walk
+          </button>
+          <button id="dir-btn">
+            Get Directions
+          </button>
+          <button id="rand-btn">
+            Random Walk
+          </button>
+          <form>
+              Miles to Walk (1 to 5):
+              <input type="number" id="miles" name="quantity" min="1" max="5">
+              <input type="submit" id="miles-btn">
+          </form>
+        </div>
+        <div id="directions-panel">
+        </div>
+        <div id="walk-time">
+        </div>
+      </div>
     </div>
-    <div id="buttons">
-      <button id="walk-btn">
-        Create Walk
-      </button>
-      <button id="dir-btn">
-        Get Directions
-      </button>
-      <button id="rand-btn">
-        Random Walk
-      </button>
-      <form>
-          Miles to Walk (1 to 5):
-          <input type="number" id="miles" name="quantity" min="1" max="5">
-          <input type="submit" id="miles-btn">
-      </form>
-    </div>
-    <div id="directions-panel">
-    </div>
-    <div id="walk-time">
-    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OverlappingMarkerSpiderfier/1.0.3/oms.min.js"></script>
     <script src="https://code.jquery.com/jquery.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="/static/js/map2.js" type="text/javascript"></script>

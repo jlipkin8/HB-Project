@@ -13,13 +13,15 @@ function setMapOnAll(map, markerArray){
 }
 
 //adds event handlers to markers 
-function addHandlersOnMarkers(markerArray, wayptArray){ 
+function addHandlersOnMarkers(markerArray, wayptArray){
+  console.log("addHandlersOnMarkers");  
   markerArray.forEach(function(marker){
-    $(marker).click(function(){
+      marker.addListener("click", function(){
       //pushes waypoint literal to waypoint array
-      wayptArray.push({location:this.getCurrentPosition()});
+      wayptArray.push({location:this.getPosition()});
       //changes opacity of marker 
-      this.setOpacity(0.4); 
+      this.setOpacity(0.3); 
+      console.log("CHAAANGE"); 
     });//end of adding an event listener on a marker
   }); 
 }
@@ -73,9 +75,10 @@ function calcRouteDurationMins(route){
 
 
 function initMap() {
+  console.log("initMap"); 
   //instantiate a DirectionsService Object 
   var directionsService = new google.maps.DirectionsService;
-  //instantiate a DirectionsRenderer object 
+  //instantiate a DirectionsRenderer object
   var directionsDisplay = new google.maps.DirectionsRenderer;
   //instantiate a Map object 
   map = new google.maps.Map(document.getElementById('art-map'), {
@@ -83,12 +86,12 @@ function initMap() {
     zoom: 12,
     // gestureHandling: 'none',
     // zoomControl: false
-    
   });
 
   // retrieves artpiece info with AJAX
   $.get("/pieces.json", function(data){
     pieces = data["results"]
+    //iterate through results 
     for(var i in pieces){
       piece = pieces[i];
       let title = piece["title"]; 
@@ -108,11 +111,9 @@ function initMap() {
         loc_desc: loc_desc, 
         artist: artist, 
         opacity: 1.0
-      });
+      });//instantiate a Marker Object 
 
-      // createHtmlArtists is supposed to replace the code below it
       var artists = createHtmlArtists(marker.artist); 
-      
       let contentString = '<div>'+ 
       '<h2>' + title + '</h2>'+ artists +
       '<h4>' + timeperiod + '</h4>' +
@@ -121,19 +122,24 @@ function initMap() {
       '<p>' + loc_desc + '</p>' +
       '</div>'; 
 
+      //instantiate an InfoWindow Object
       let infowindow = new google.maps.InfoWindow({
         content: contentString
-      }); // end of making an infowindoq
+      }); 
+
+      //add event listeners to each marker
       marker.addListener('mouseover', function(){
-        // console.log("do stuff"); 
         infowindow.open(map, this); 
-      }); //end of adding an event listener on a marker
+      }); 
       marker.addListener('mouseout', function(){
         infowindow.close(); 
       })
+
+      //push marker into markers array 
       markers.push(marker);  
     }//end of for loop
-      //add event handler to create walk btn 
+
+    //add event handler to create walk btn 
     $("#walk-btn").on("click", function(){
       addHandlersOnMarkers(markers, waypts); 
     }); // end of walk btn even handler
@@ -173,7 +179,6 @@ function initMap() {
 
             /* Choose a few random markers from grabBagMarker */ 
             var selectedMarkers = [];
-            //call get RandomMarkers()
             getRandomMarkers(3, grabBagMarkers, selectedMarkers); 
             
             var randWayPoints = []; 
@@ -235,6 +240,7 @@ function initMap() {
           //creating a DirectionsRequest object 
           var dirRequest = {
             origin: pos, //get current location
+            //destination could be last waypoint
             destination: pos,// end at current location
             travelMode: 'WALKING', 
             waypoints: waypts,
@@ -280,11 +286,15 @@ $( function() {
 
 $("#submit-name").on("click", function(evt){
   evt.preventDefault();
-  setMapOnAll(null, markers);
-  var searchArtist = $("#tags").val(); 
-  for (var i = 0; i < markers.length; i++){ 
-    if((markers[i].artist.indexOf(searchArtist)) !== -1){
-      markers[i].setMap(map);
+  var searchArtist = $("#tags").val();
+  if(searchArtist){
+    setMapOnAll(null, markers);
+    for (var i = 0; i < markers.length; i++){ 
+      if((markers[i].artist.indexOf(searchArtist)) !== -1){
+        markers[i].setMap(map);
+      }
     }
+  }else{
+    setMapOnAll(map, markers); 
   }
 }); //end of click event 
