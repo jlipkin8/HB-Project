@@ -255,6 +255,7 @@ function initMap() {
           // calculate route 
           directionsService.route(dirRequest, function(response, status){
             if(status === 'OK'){ 
+              $("#crt-walk").toggle("slow"); 
               directionsDisplay.setDirections(response);
               var route = response.routes[0]; 
               var dur = calcRouteDurationMins(route); 
