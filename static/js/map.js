@@ -93,6 +93,78 @@ function calcRouteDurationMins(route){
   return durationMins; 
 }
 
+var styleArray = 
+[
+    {
+        "featureType": "landscape.natural",
+        "elementType": "geometry.fill",
+        "stylers": [
+            {
+                "visibility": "on"
+            },
+            {
+                "color": "#e0efef"
+            }
+        ]
+    },
+    {
+        "featureType": "poi",
+        "elementType": "geometry.fill",
+        "stylers": [
+            {
+                "visibility": "on"
+            },
+            {
+                "hue": "#1900ff"
+            },
+            {
+                "color": "#c0e8e8"
+            }
+        ]
+    },
+    {
+        "featureType": "road",
+        "elementType": "geometry",
+        "stylers": [
+            {
+                "lightness": 100
+            },
+            {
+                "visibility": "simplified"
+            }
+        ]
+    },
+    {
+        "featureType": "road",
+        "elementType": "labels",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "transit.line",
+        "elementType": "geometry",
+        "stylers": [
+            {
+                "visibility": "on"
+            },
+            {
+                "lightness": 700
+            }
+        ]
+    },
+    {
+        "featureType": "water",
+        "elementType": "all",
+        "stylers": [
+            {
+                "color": "#7dcdcd"
+            }
+        ]
+    }
+]; 
 
 function initMap() {
   console.log("initMap"); 
@@ -104,6 +176,7 @@ function initMap() {
   map = new google.maps.Map(document.getElementById('art-map'), {
     center: {lat: 37.7748, lng: -122.435},
     zoom: 12,
+    styles: styleArray
     // gestureHandling: 'none',
     // zoomControl: false
   });
@@ -115,7 +188,9 @@ function initMap() {
     for(var i in pieces){
       piece = pieces[i];
       let title = piece["title"]; 
-      let timeperiod = piece["timeperiod"]; 
+      let timeperiod = piece["timeperiod"];
+      let sliced_time = timeperiod.slice(0,4); 
+      timeperiod = sliced_time; 
       let med_desc = piece["med_desc"]; 
       let credit_line = piece["creditline"]; 
       let loc_desc = piece["loc_desc"];
@@ -162,12 +237,15 @@ function initMap() {
     //add event handler to create walk btn 
     $("#walk-btn").on("click", function(){
       addHandlersOnMarkers(markers, waypts);
+      $("#buttons").prop("hidden", true); 
       $("#crt-walk").toggle("slow");   
     }); // end of walk btn even handler
 
     $("#rand-btn").click(function (evt) {
+      $("#buttons").prop("hidden", true);
+      $("#rand-walk").toggle("slow");
       $("#miles-btn").click(function(event){
-        event.preventDefault();
+        event.preventDefault(); 
         //getting directions for randomewalk 
          if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(function(position){
@@ -209,6 +287,8 @@ function initMap() {
               randWayPoints.push({location: wayLocation}); 
             }
 
+            
+
             directionsDisplay.setMap(map);
             directionsDisplay.setPanel(document.getElementById('directions-panel'));
             
@@ -224,13 +304,11 @@ function initMap() {
               directionsService.route(randDirRequest, function(response, status){
                 if(status === 'OK'){ 
                   directionsDisplay.setDirections(response);
-                  var route = response.routes[0]; 
-                  var dur = calcRouteDurationMins(route); 
-                  divMin = document.getElementById("walk-time"); 
-                  divMin.innerHTML = "<p>" + dur + " mins" + "</p>"; 
-                  if(dur > 60){
-                    window.alert("Are you sure you want to walk " + durationMins +" mins?"); 
-                  } 
+                  console.log(response);
+                  // var route = response.routes[0]; 
+                  // var dur = calcRouteDurationMins(route); 
+                  // divMin = document.getElementById("walk-time"); 
+                  // divMin.innerHTML = "<p>" + dur + " mins" + "</p>"; 
                 }else{
                   window.alert("Directions request failed due to " + status); 
                 }
@@ -272,16 +350,14 @@ function initMap() {
           }
           // calculate route 
           directionsService.route(dirRequest, function(response, status){
-            if(status === 'OK'){ 
-              $("#crt-walk").toggle("slow"); 
+            if(status === 'OK'){
+              $("#crt-walk").toggle("slow");
+              console.log(response);
               directionsDisplay.setDirections(response);
-              var route = response.routes[0]; 
-              var dur = calcRouteDurationMins(route); 
-              divMin = document.getElementById("walk-time"); 
-              divMin.innerHTML = "<p>" + dur + " mins" + "</p>"; 
-              if(dur > 60){
-                window.alert("Are you sure you want to walk " + durationMins +" mins?"); 
-              } 
+              // var route = response.routes[0]; 
+              // var dur = calcRouteDurationMins(route); 
+              // divMin = document.getElementById("walk-time"); 
+              // divMin.innerHTML = "<p>" + dur + " mins" + "</p>";  
             }else{
               window.alert("Directions request failed due to " + status); 
             }

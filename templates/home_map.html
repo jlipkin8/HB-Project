@@ -2,71 +2,70 @@
 <html>
 <head>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
-    <style type="text/css">
-        html, body {
-             height: 100%; 
-             margin: 0; 
-             padding: 0; 
-        }
-        #art-map { 
-            height: 100%; 
-            background-color: pink;  
-        }
-        form {
-            margin: 20px; 
-        }
-        .ui-widget {
-          margin: 20px; 
-        }
-
-        .row{
-          height: 100%;
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css?family=Shrikhand" rel="stylesheet">
+    <link href="../static/css/style.css" rel="stylesheet" type="text/css">
 </head>
-
 <body>
     <div class="row">
       <div class="col-lg-8" id="art-map"></div>
       <div class="col-lg-4">
-        <h1>Art Trek</h1>
+        <h1 class="text-center">Arts Trek</h1>
         <div id="walk-time"></div>
+
+        <!-- Main Page buttons -->
         <div id="buttons">
-          <button id="walk-btn">
+          Choose: 
+          <button type="button" class="btn btn-outline-primary" id="walk-btn">
             Create Walk
           </button>
-          <button id="rand-btn">
+          <br>
+          or
+          <br>
+          Choose:
+          <button type="button" class="btn btn-outline-primary" id="rand-btn">
             Random Walk
           </button>
-          <form hidden>
-              Miles to Walk (1 to 5):
+        </div>
+        <!-- end of main page buttons -->
+
+        <!-- What shows when "Create Walk" button is click -->
+        <div id="crt-walk" hidden>
+          <h2>Create Artist Walk</h2>
+          <ol>
+              <li>
+                <h3>Filter By Artist Name (or not): </h3>
+                <div class="ui-widget">
+                  <input id="tags" method="post">
+                  <input type="submit" id="submit-name" value="Submit">
+                </div>  
+              </li>
+              <li>
+                  <h3>Select Locations on Map</h3>
+                  <p>Click on markers to select location. 
+                      Do not choose more than 5.
+                  </p>
+                  <ol id="marker-lst">
+                  </ol>
+              </li>
+              <li>
+                  <h3>Click button to get directions.</h3>
+                  <button id="dir-btn" disabled>Get Directions</button>
+              </li>
+          </ol>
+        </div>
+
+        <div id="rand-walk" hidden>
+          <form>
+              Specify a Diameter(miles): 
               <input type="number" id="miles" name="quantity" min="1" max="5">
               <input type="submit" id="miles-btn">
           </form>
-          <div id="crt-walk" hidden>
-            <h2>Create Artist Walk</h2>
-            <ol>
-                <li>
-                  <div class="ui-widget">
-                    <label for="tags">Search by Artist Name!: </label>
-                    <input id="tags" method="post">
-                    <input type="submit" id="submit-name" value="Submit">
-                  </div>  
-                </li>
-                <li>
-                    <h3>Select Locations on Map</h3>
-                    <p>Click on markers to select location. 
-                        Do not choose more than 5.
-                    </p>
-                    <ol id="marker-lst">
-                    </ol>
-                </li>
-                <li>
-                    <button id="dir-btn" disabled>Get Directions</button>
-                </li>
-            </ol>
-          </div>
+          <p>This diameter will be used to create a circle on a map from which
+            random markers are chosen from. 
+          </p>
         </div>
+
+       
         <div id="directions-panel">
         </div>
       </div>

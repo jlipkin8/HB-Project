@@ -1,0 +1,42 @@
+html, body {
+     height: 100%; 
+     margin: 0; 
+     padding: 0;
+}
+
+h1{
+  font-family: 'Shrikhand', cursive;
+  color: #7dcdcd;
+  font-size: 50px; 
+}
+
+h2 {
+    color: #7eeee4;
+}
+#art-map { 
+    height: 100%; 
+    background-color: pink;  
+}
+form {
+    margin: 20px; 
+}
+.ui-widget {
+  margin: 20px; 
+}
+
+.row{
+  height: 100%;
+}
+
+.ui-autocomplete-input:focus{
+    background-color: pink; 
+}
+
+ul{
+    background-color: pink; 
+}
+
+button{
+    color: white;
+    background-color: #7dcdcd; 
+}
