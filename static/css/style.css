@@ -5,15 +5,49 @@ html, body {
 }
 
 h1{
-  font-family: 'Shrikhand', cursive;
+  text-align: center; 
+}
+h1 div{
+  /*font-family: 'Zilla Slab Highlight', cursive;*/
+  font-family: 'Bevan', sans-serif;
   color: #4E7F7F; 
   font-size: 70px;
   text-decoration: underline #7DCDCD;
 }
 
+#title-one{
+  width: 400px; 
+  font-size: 90px;
+  margin-left: 40px;  
+}
+
+#title-two{
+  margin-left: 50px; 
+}
+
+#intro{
+  margin-bottom: 50px;
+}
+
+#sub-title {
+  margin: 25px;
+  font-size: 20px;
+  text-align: center;
+  color: white; 
+  background-color: #cdcd7d;
+  padding: 5px; 
+}
+
+#sub-title span{
+  color: white;
+  background-color: #7dcdcd; 
+  font-size: 20px; 
+}
+
 h2 {
   color: #7DCDCD; 
   text-decoration: underline #cdcd7d;
+  font-family: 'Bevan', sans-serif;
 }
 
 h3 {
@@ -79,8 +113,7 @@ ul li:nth-child(odd) {
 
 
 #not-map{
-  border: 15px solid #cdcd7d;
-  /*background: linear-gradient(to top, #cdcd7d, white);*/
+  box-shadow: -8px -7px 10px 0px rgba(203, 203, 203, 0.58); 
   height: 100%; 
 }
 
@@ -88,7 +121,11 @@ ul li:nth-child(odd) {
   margin-bottom: 50px; 
 }
 
+#crt-walk h2{
+  margin-bottom: 50px; 
+}
 #crt-walk{
+  margin-top: 50px; 
   color: #4E7F7F;
 }
 
@@ -127,23 +164,27 @@ button:hover{
 }
 
 #rand-walk{
+  margin-top: 50px; 
   color: #4E7F7F;
-  font-size: 16px;
+  font-size: 20px;
 }
 
-#intro{
-  margin-bottom: 50px;
+#rand-walk h2{
+  margin-bottom: 50px; 
 }
 
-#intro p{
-  margin-top: -30px; 
-  line-height: 100px; 
-  width: 200px;
-  height: 200px;
-  border-radius: 100%; 
-  font-size: 16px;
-  text-align: center;
-  color: #4E7F7F; 
-  /*margin: 0 auto;*/
-  background: linear-gradient(to top, #cdcd7d, white);
+#rand-info{
+  color: #7dcdcd;
+  /*margin-top: 40px; */
+}
+
+.submit{
+  color: white;
+  background-color: #7dcdcd; 
+}
+
+.submit:hover{
+  color: #7dcdcd;
+  background-color: white; 
+  border: 2px solid #7dcdcd; 
 }

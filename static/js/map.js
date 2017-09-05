@@ -237,12 +237,14 @@ function initMap() {
     //add event handler to create walk btn 
     $("#walk-btn").on("click", function(){
       addHandlersOnMarkers(markers, waypts);
-      $("#buttons").prop("hidden", true); 
+      $("#buttons").prop("hidden", true);
+      $("#intro").prop("hidden", true); 
       $("#crt-walk").toggle("slow");   
     }); // end of walk btn even handler
 
     $("#rand-btn").click(function (evt) {
       $("#buttons").prop("hidden", true);
+      $("#intro").prop("hidden", true); 
       $("#rand-walk").toggle("slow");
       $("#miles-btn").click(function(event){
         event.preventDefault();

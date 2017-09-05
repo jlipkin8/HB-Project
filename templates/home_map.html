@@ -1,18 +1,24 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Shrikhand" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Bungee+Shade" rel="stylesheet">
-    <link href="../static/css/style.css" rel="stylesheet" type="text/css">
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Bevan" rel="stylesheet">
+  <link href="../static/css/style.css" rel="stylesheet" type="text/css">
 </head>
 <body>
     <div class="row">
       <div class="col-lg-8" id="art-map"></div>
       <div class="col-lg-4" id="not-map">
         <div id="intro">
-          <h1 class="text-center">Arts Trek</h1>
-          <p>Explore San Francisco's public art through walking.</p>
+          <h1>
+            <div class="text-left" id="title-one">Arts</div>
+            <div id="title-two">Trek</div>
+          </h1>
+          <p id="sub-title"> 
+            Explore <span>San Francisco's</span> 
+            public art through walking.
+          </p>
+          
         </div>
         <!-- Main Page buttons -->
         <div id="buttons" class="no-pattern">
@@ -34,7 +40,7 @@
                 <h3>Filter By Artist Name (or not): </h3>
                 <div class="ui-widget">
                   <input id="tags" method="post">
-                  <input type="submit" id="submit-name" value="Submit">
+                  <input class="btn btn-default submit" type="submit" id="submit-name" value="Submit">
                 </div>  
               </li>
               <li>
@@ -57,9 +63,9 @@
           <form>
               Specify a Diameter(miles): 
               <input type="number" id="miles" name="quantity" min="1" max="5">
-              <button class=" btn" type="submit" id="miles-btn">Submit</button>
+              <button class="btn btn-default submit" class=" btn" type="submit" id="miles-btn">Submit</button>
           </form>
-          <p>This diameter will be used to create a circle on a map from which
+          <p id="rand-info">This diameter will be used to create a circle on a map from which
             random markers are chosen from. 
           </p>
         </div>
