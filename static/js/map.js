@@ -245,7 +245,8 @@ function initMap() {
       $("#buttons").prop("hidden", true);
       $("#rand-walk").toggle("slow");
       $("#miles-btn").click(function(event){
-        event.preventDefault(); 
+        event.preventDefault();
+        $("#rand-walk").toggle("slow");
         //getting directions for randomewalk 
          if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(function(position){
@@ -261,10 +262,10 @@ function initMap() {
             console.log(walkRadius);
             var walkRadiusMeters = walkRadius * 1609.34;
             var cityCircle = new google.maps.Circle({
-                strokeColor: '#FF0000',
-                strokeOpacity: 0.8,
+                strokeColor: "red",
+                strokeOpacity: 1.0,
                 strokeWeight: 2,
-                fillColor: '#FF0000',
+                fillColor: '#cdcd7d',
                 fillOpacity: 0.35,
                 map: map,
                 center: pos,

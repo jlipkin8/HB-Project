@@ -3,14 +3,17 @@
 <head>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Shrikhand" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Bungee+Shade" rel="stylesheet">
     <link href="../static/css/style.css" rel="stylesheet" type="text/css">
 </head>
 <body>
     <div class="row">
       <div class="col-lg-8" id="art-map"></div>
       <div class="col-lg-4" id="not-map">
-        <h1 class="text-center">Arts Trek</h1>
-
+        <div id="intro">
+          <h1 class="text-center">Arts Trek</h1>
+          <p>Explore San Francisco's public art through walking.</p>
+        </div>
         <!-- Main Page buttons -->
         <div id="buttons" class="no-pattern">
           <button type="button" class="btn btn-outline-primary btn-lg" id="walk-btn">
@@ -44,7 +47,7 @@
               </li>
               <li>
                   <h3>Click button to get directions.</h3>
-                  <button id="dir-btn" disabled>Get Directions</button>
+                  <button id="dir-btn" class="btn btn-default" disabled>Get Directions</button>
               </li>
           </ol>
         </div>
@@ -54,7 +57,7 @@
           <form>
               Specify a Diameter(miles): 
               <input type="number" id="miles" name="quantity" min="1" max="5">
-              <input type="submit" id="miles-btn">
+              <button class=" btn" type="submit" id="miles-btn">Submit</button>
           </form>
           <p>This diameter will be used to create a circle on a map from which
             random markers are chosen from. 
