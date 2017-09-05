@@ -129,6 +129,16 @@ ul li:nth-child(odd) {
   color: #4E7F7F;
 }
 
+#tags{
+  width: 200px;
+  font-size: 16px;
+}
+
+.form-control {
+  display: inline-block;
+  font-size: 16px;
+}
+
 #marker-lst{
   width: 300px; 
 }
@@ -138,6 +148,10 @@ ul li:nth-child(odd) {
   padding: 10px;
   background-color: #cdcd7d; 
 
+}
+
+#crt-walk li p {
+  font-size: 16px; 
 }
 
 button{
@@ -150,6 +164,10 @@ button:hover{
   color: #7dcdcd;
   background-color: white; 
   border: 2px solid #7dcdcd; 
+}
+
+input[type=submit]:focus{
+  background: #cdcd7d; 
 }
 
 #dir-btn{
@@ -187,4 +205,12 @@ button:hover{
   color: #7dcdcd;
   background-color: white; 
   border: 2px solid #7dcdcd; 
+}
+
+#or{
+  margin-bottom: 70px; 
+}
+
+#miles-btn:focus{
+  background: #cdcd7d; 
 }
