@@ -1,17 +1,23 @@
 html, body {
-     height: 100%; 
-     margin: 0; 
-     padding: 0;
+  height: 100%; 
+  margin: 0; 
+  padding: 0;
 }
 
 h1{
   font-family: 'Shrikhand', cursive;
-  color: #7dcdcd;
-  font-size: 50px; 
+  /*color: #7dcdcd;*/
+  color: #4E7F7F; 
+  font-size: 60px;
 }
 
 h2 {
-    color: #7eeee4;
+  color: #7DCDCD; 
+  text-decoration: underline #cdcd7d;
+}
+
+h3 {
+  color: #4E7F7F;
 }
 #art-map { 
     height: 100%; 
@@ -28,15 +34,81 @@ form {
   height: 100%;
 }
 
+ul{
+  background-color: white; 
+  border: 1px solid #cdcd7d; 
+  list-style-type: none;
+  width: 202px; 
+  padding: 0; 
+}
 .ui-autocomplete-input:focus{
-    background-color: pink; 
+    background-color: #e5f5f5; 
 }
 
-ul{
-    background-color: pink; 
+ul li {
+  color: #4E7F7F;
+  width: 200px;
+  padding: 10px;
+  font-size: 14px; 
+}
+
+ul li:nth-child(odd) {
+  background-color: #e5f5f5; 
 }
 
 button{
     color: white;
-    background-color: #7dcdcd; 
+    background-color: #7dcdcd;
+    width: 150px;
+    height: 75px;
+    margin-bottom: 250px; 
 }
+
+
+button:hover{
+  color: #7dcdcd;
+  background-color: white; 
+  border: 2px solid #7dcdcd; 
+}
+
+#buttons{
+  margin-left: 33%;
+}
+
+#buttons h3{
+  margin-left: -50px;
+  margin-bottom: 50px; 
+  text-align: center; 
+}
+
+#buttons button:first-child{
+  margin-bottom: 50px; 
+  
+}
+
+/*
+#not-map{
+  background-size: cover;
+  background: url("../wormz.png") center center;
+  padding: 0; 
+  height: 100%;
+}
+*/
+.no-pattern{
+  background-color: white;
+
+}
+
+#crt-walk li{
+  margin-bottom: 50px; 
+}
+
+#marker-lst{
+  font-size: 14px;  
+}
+
+#marker-lst li:nth-child(odd){
+  background-color: #cdcd7d; 
+}
+
+

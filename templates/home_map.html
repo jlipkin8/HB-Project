@@ -8,28 +8,23 @@
 <body>
     <div class="row">
       <div class="col-lg-8" id="art-map"></div>
-      <div class="col-lg-4">
+      <div class="col-lg-4" id="not-map">
         <h1 class="text-center">Arts Trek</h1>
-        <div id="walk-time"></div>
 
         <!-- Main Page buttons -->
-        <div id="buttons">
-          Choose: 
-          <button type="button" class="btn btn-outline-primary" id="walk-btn">
+        <div id="buttons" class="no-pattern">
+          <button type="button" class="btn btn-outline-primary btn-lg" id="walk-btn">
             Create Walk
           </button>
-          <br>
-          or
-          <br>
-          Choose:
-          <button type="button" class="btn btn-outline-primary" id="rand-btn">
+          <h3>Or</h3>
+          <button type="button" class="btn btn-outline-primary btn-lg" id="rand-btn">
             Random Walk
           </button>
         </div>
         <!-- end of main page buttons -->
 
         <!-- What shows when "Create Walk" button is click -->
-        <div id="crt-walk" hidden>
+        <div id="crt-walk" class="no-pattern" hidden>
           <h2>Create Artist Walk</h2>
           <ol>
               <li>
@@ -54,7 +49,8 @@
           </ol>
         </div>
 
-        <div id="rand-walk" hidden>
+        <div id="rand-walk" class="no-pattern" hidden>
+          <h2>Random Artist Walk</h2>
           <form>
               Specify a Diameter(miles): 
               <input type="number" id="miles" name="quantity" min="1" max="5">
