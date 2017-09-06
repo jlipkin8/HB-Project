@@ -19,7 +19,7 @@
 
 ### Create Walk
 
-![create walk](crt_wlk.png)
+![create walk](static/crt_wlk.png)
 
 - Allows for filtering markers by Artist's name.
 - Clicking on a marker assigns it as a waypoint in the directions.
@@ -27,7 +27,7 @@
 
 ### Random Walk
 
-![random walk](rnd_wlk.png)
+![random walk](static/rnd_wlk.png)
 
 - User can choose the diameter of the polygon generated on the map
 - The program "randomly" selects markers within that polygon
