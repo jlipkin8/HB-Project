@@ -1,4 +1,4 @@
-# Stars Trek 
+# Arts Trek 
 
 ![homepage](static/homepage.png)
 ##Description 
